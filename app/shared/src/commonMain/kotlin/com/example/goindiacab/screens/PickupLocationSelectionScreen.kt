@@ -68,9 +68,9 @@ fun PickupLocationSelectionScreen(
         onBackClick()
     }
 
-    AdaptiveContainer(backgroundColor = BackgroundWhite) {
+    AdaptiveContainer(backgroundColor = SurfaceGray) {
         Scaffold(
-            containerColor = Color.White,
+            containerColor = SurfaceGray,
             modifier = Modifier.fillMaxSize()
         ) { paddingValues ->
             Column(
@@ -344,25 +344,34 @@ fun PickupLocationSelectionScreen(
                     modifier = Modifier.padding(horizontal = 16.dp, vertical = 6.dp)
                 )
 
-                // Search Results LazyColumn with stable keys
-                LazyColumn(
+                // Search Results LazyColumn inside elevated white card
+                Surface(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .weight(1f),
-                    contentPadding = PaddingValues(bottom = 24.dp)
+                        .weight(1f)
+                        .padding(horizontal = 16.dp),
+                    shape = RoundedCornerShape(16.dp),
+                    color = Color.White,
+                    border = BorderStroke(1.dp, Color(0xFFE5E7EB)),
+                    shadowElevation = 1.dp
                 ) {
-                    items(
-                        items = uiState.searchResults,
-                        key = { it.id }
-                    ) { item ->
-                        val isFavorite = uiState.favoriteIds.contains(item.id)
+                    LazyColumn(
+                        modifier = Modifier.fillMaxSize(),
+                        contentPadding = PaddingValues(bottom = 16.dp)
+                    ) {
+                        items(
+                            items = uiState.searchResults,
+                            key = { it.id }
+                        ) { item ->
+                            val isFavorite = uiState.favoriteIds.contains(item.id)
 
-                        SearchResultRow(
-                            item = item,
-                            isFavorite = isFavorite,
-                            onItemClick = { onLocationSelected(item) },
-                            onFavoriteClick = { viewModel.toggleFavorite(item.id) }
-                        )
+                            SearchResultRow(
+                                item = item,
+                                isFavorite = isFavorite,
+                                onItemClick = { onLocationSelected(item) },
+                                onFavoriteClick = { viewModel.toggleFavorite(item.id) }
+                            )
+                        }
                     }
                 }
             }

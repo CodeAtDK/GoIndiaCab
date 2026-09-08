@@ -204,42 +204,53 @@ fun BookingConfirmationScreen(
                             }
                         }
 
-                        // Origin
+                        // Origin and Drop Route with Connector
                         Row(
-                            verticalAlignment = Alignment.CenterVertically,
-                            horizontalArrangement = Arrangement.spacedBy(10.dp)
+                            modifier = Modifier.fillMaxWidth(),
+                            verticalAlignment = Alignment.CenterVertically
                         ) {
-                            Box(
-                                modifier = Modifier
-                                    .size(10.dp)
-                                    .clip(CircleShape)
-                                    .background(ColorGreen)
-                            )
-                            Text(
-                                text = session.pickupLocation,
-                                fontSize = 14.sp,
-                                fontWeight = FontWeight.Medium,
-                                color = ColorTextPrimary
-                            )
-                        }
+                            // Connector Column
+                            Column(
+                                horizontalAlignment = Alignment.CenterHorizontally,
+                                modifier = Modifier.width(18.dp)
+                            ) {
+                                Box(
+                                    modifier = Modifier
+                                        .size(10.dp)
+                                        .clip(CircleShape)
+                                        .background(ColorGreen)
+                                )
+                                Box(
+                                    modifier = Modifier
+                                        .width(2.dp)
+                                        .height(28.dp)
+                                        .background(Color(0xFFCBD5E1))
+                                )
+                                Box(
+                                    modifier = Modifier
+                                        .size(10.dp)
+                                        .clip(CircleShape)
+                                        .background(ColorOrange)
+                                )
+                            }
 
-                        // Drop
-                        Row(
-                            verticalAlignment = Alignment.CenterVertically,
-                            horizontalArrangement = Arrangement.spacedBy(10.dp)
-                        ) {
-                            Box(
-                                modifier = Modifier
-                                    .size(10.dp)
-                                    .clip(CircleShape)
-                                    .background(ColorOrange)
-                            )
-                            Text(
-                                text = session.dropLocation,
-                                fontSize = 14.sp,
-                                fontWeight = FontWeight.Medium,
-                                color = ColorTextPrimary
-                            )
+                            Spacer(modifier = Modifier.width(10.dp))
+
+                            Column(modifier = Modifier.weight(1f)) {
+                                Text(
+                                    text = session.pickupLocation,
+                                    fontSize = 14.sp,
+                                    fontWeight = FontWeight.Medium,
+                                    color = ColorTextPrimary
+                                )
+                                Spacer(modifier = Modifier.height(14.dp))
+                                Text(
+                                    text = session.dropLocation,
+                                    fontSize = 14.sp,
+                                    fontWeight = FontWeight.Medium,
+                                    color = ColorTextPrimary
+                                )
+                            }
                         }
 
                         HorizontalDivider(thickness = 0.8.dp, color = Color(0xFFF3F4F6))

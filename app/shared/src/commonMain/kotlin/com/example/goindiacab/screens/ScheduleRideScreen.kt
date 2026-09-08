@@ -119,47 +119,84 @@ fun ScheduleRideScreen(
                         border = BorderStroke(1.dp, Color(0xFFE2E8F0)),
                         shadowElevation = 1.dp
                     ) {
-                        Column(modifier = Modifier.padding(16.dp)) {
-                            // Origin
-                            Row(verticalAlignment = Alignment.CenterVertically) {
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(16.dp),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            // Left Route Connector Column
+                            Column(
+                                horizontalAlignment = Alignment.CenterHorizontally,
+                                modifier = Modifier.width(18.dp)
+                            ) {
                                 Box(
                                     modifier = Modifier
-                                        .size(10.dp)
+                                        .size(12.dp)
                                         .clip(CircleShape)
                                         .background(BrandBlue)
                                 )
-                                Spacer(modifier = Modifier.width(12.dp))
-                                Text(
-                                    text = ride.pickupLocation,
-                                    fontSize = 14.sp,
-                                    fontWeight = FontWeight.SemiBold,
-                                    fontFamily = dmSansFontFamily(),
-                                    color = TextDark
-                                )
-                            }
-
-                            HorizontalDivider(
-                                modifier = Modifier.padding(start = 22.dp, top = 10.dp, bottom = 10.dp),
-                                color = Color(0xFFF1F5F9),
-                                thickness = 1.dp
-                            )
-
-                            // Destination
-                            Row(verticalAlignment = Alignment.CenterVertically) {
                                 Box(
                                     modifier = Modifier
-                                        .size(10.dp)
+                                        .width(2.dp)
+                                        .height(34.dp)
+                                        .background(Color(0xFFCBD5E1))
+                                )
+                                Box(
+                                    modifier = Modifier
+                                        .size(12.dp)
                                         .clip(CircleShape)
                                         .background(MarkerOrange)
                                 )
-                                Spacer(modifier = Modifier.width(12.dp))
-                                Text(
-                                    text = ride.dropoffLocation,
-                                    fontSize = 14.sp,
-                                    fontWeight = FontWeight.SemiBold,
-                                    fontFamily = dmSansFontFamily(),
-                                    color = TextDark
+                            }
+
+                            Spacer(modifier = Modifier.width(12.dp))
+
+                            // Right Details Column
+                            Column(modifier = Modifier.weight(1f)) {
+                                Column(modifier = Modifier.padding(vertical = 2.dp)) {
+                                    Text(
+                                        text = "PICKUP",
+                                        fontSize = 10.sp,
+                                        fontWeight = FontWeight.Bold,
+                                        fontFamily = outfitFontFamily(),
+                                        color = BrandBlue,
+                                        letterSpacing = 0.5.sp
+                                    )
+                                    Spacer(modifier = Modifier.height(2.dp))
+                                    Text(
+                                        text = ride.pickupLocation,
+                                        fontSize = 14.sp,
+                                        fontWeight = FontWeight.SemiBold,
+                                        fontFamily = dmSansFontFamily(),
+                                        color = TextDark
+                                    )
+                                }
+
+                                HorizontalDivider(
+                                    modifier = Modifier.padding(vertical = 6.dp),
+                                    color = Color(0xFFF1F5F9),
+                                    thickness = 1.dp
                                 )
+
+                                Column(modifier = Modifier.padding(vertical = 2.dp)) {
+                                    Text(
+                                        text = "DROP-OFF",
+                                        fontSize = 10.sp,
+                                        fontWeight = FontWeight.Bold,
+                                        fontFamily = outfitFontFamily(),
+                                        color = MarkerOrange,
+                                        letterSpacing = 0.5.sp
+                                    )
+                                    Spacer(modifier = Modifier.height(2.dp))
+                                    Text(
+                                        text = ride.dropoffLocation,
+                                        fontSize = 14.sp,
+                                        fontWeight = FontWeight.SemiBold,
+                                        fontFamily = dmSansFontFamily(),
+                                        color = TextDark
+                                    )
+                                }
                             }
                         }
                     }

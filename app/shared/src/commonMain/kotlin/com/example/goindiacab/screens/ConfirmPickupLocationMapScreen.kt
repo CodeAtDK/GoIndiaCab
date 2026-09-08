@@ -470,15 +470,26 @@ private fun BottomConfirmationCard(
 
             Spacer(modifier = Modifier.height(14.dp))
 
-            // Subtitle Tag: "PICKUP LOCATION"
-            Text(
-                text = "PICKUP LOCATION",
-                fontSize = 11.sp,
-                fontWeight = FontWeight.Bold,
-                fontFamily = outfitFontFamily(),
-                color = Color(0xFF6B7280),
-                letterSpacing = 0.8.sp
-            )
+            // Subtitle Tag: "PICKUP LOCATION" with green indicator
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(6.dp)
+            ) {
+                Box(
+                    modifier = Modifier
+                        .size(8.dp)
+                        .clip(CircleShape)
+                        .background(Color(0xFF10B981))
+                )
+                Text(
+                    text = "PICKUP LOCATION",
+                    fontSize = 11.sp,
+                    fontWeight = FontWeight.Bold,
+                    fontFamily = outfitFontFamily(),
+                    color = Color(0xFF10B981),
+                    letterSpacing = 0.8.sp
+                )
+            }
 
             Spacer(modifier = Modifier.height(6.dp))
 

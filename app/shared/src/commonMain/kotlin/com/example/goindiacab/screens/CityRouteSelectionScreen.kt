@@ -136,29 +136,55 @@ fun CityRouteSelectionScreen(
                         border = BorderStroke(1.dp, Color(0xFFE2E8F0)),
                         shadowElevation = 1.dp
                     ) {
-                        Column(modifier = Modifier.padding(horizontal = 16.dp, vertical = 14.dp)) {
-                            // FROM CITY Row
-                            Row(
-                                verticalAlignment = Alignment.CenterVertically,
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .clip(RoundedCornerShape(8.dp))
-                                    .clickable(onClick = onSelectPickupClick)
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(horizontal = 16.dp, vertical = 14.dp),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            // Left Route Connector Column
+                            Column(
+                                horizontalAlignment = Alignment.CenterHorizontally,
+                                modifier = Modifier.width(18.dp)
                             ) {
                                 Box(
                                     modifier = Modifier
-                                        .size(10.dp)
+                                        .size(12.dp)
                                         .clip(CircleShape)
                                         .background(BrandBlue)
                                 )
-                                Spacer(modifier = Modifier.width(12.dp))
-                                Column {
+                                Box(
+                                    modifier = Modifier
+                                        .width(2.dp)
+                                        .height(38.dp)
+                                        .background(Color(0xFFCBD5E1))
+                                )
+                                Box(
+                                    modifier = Modifier
+                                        .size(12.dp)
+                                        .clip(CircleShape)
+                                        .background(BrandOrange)
+                                )
+                            }
+
+                            Spacer(modifier = Modifier.width(12.dp))
+
+                            // Right Details Column
+                            Column(modifier = Modifier.weight(1f)) {
+                                // FROM CITY Row
+                                Column(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .clip(RoundedCornerShape(8.dp))
+                                        .clickable(onClick = onSelectPickupClick)
+                                        .padding(vertical = 4.dp)
+                                ) {
                                     Text(
                                         text = "FROM CITY",
                                         fontSize = 10.sp,
                                         fontWeight = FontWeight.Bold,
                                         fontFamily = outfitFontFamily(),
-                                        color = TextMuted,
+                                        color = BrandBlue,
                                         letterSpacing = 0.5.sp
                                     )
                                     Spacer(modifier = Modifier.height(2.dp))
@@ -170,37 +196,27 @@ fun CityRouteSelectionScreen(
                                         color = if (uiState.fromCity.isBlank()) TextMuted else TextDark
                                     )
                                 }
-                            }
 
-                            // Divider
-                            HorizontalDivider(
-                                modifier = Modifier.padding(start = 22.dp, top = 10.dp, bottom = 10.dp),
-                                color = Color(0xFFF1F5F9),
-                                thickness = 1.dp
-                            )
-
-                            // TO CITY Row
-                            Row(
-                                verticalAlignment = Alignment.CenterVertically,
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .clip(RoundedCornerShape(8.dp))
-                                    .clickable(onClick = onSelectDestinationClick)
-                            ) {
-                                Box(
-                                    modifier = Modifier
-                                        .size(10.dp)
-                                        .clip(CircleShape)
-                                        .background(BrandOrange)
+                                HorizontalDivider(
+                                    modifier = Modifier.padding(vertical = 6.dp),
+                                    color = Color(0xFFF1F5F9),
+                                    thickness = 1.dp
                                 )
-                                Spacer(modifier = Modifier.width(12.dp))
-                                Column {
+
+                                // TO CITY Row
+                                Column(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .clip(RoundedCornerShape(8.dp))
+                                        .clickable(onClick = onSelectDestinationClick)
+                                        .padding(vertical = 4.dp)
+                                ) {
                                     Text(
                                         text = "TO CITY",
                                         fontSize = 10.sp,
                                         fontWeight = FontWeight.Bold,
                                         fontFamily = outfitFontFamily(),
-                                        color = TextMuted,
+                                        color = BrandOrange,
                                         letterSpacing = 0.5.sp
                                     )
                                     Spacer(modifier = Modifier.height(2.dp))

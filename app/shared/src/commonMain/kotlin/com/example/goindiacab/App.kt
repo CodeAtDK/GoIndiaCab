@@ -70,7 +70,7 @@ enum class AppScreen(val displayName: String) {
     PARTNER_ASSIGNED("Partner Assigned"),
     REFUND_INITIATED("Refund Initiated"),
     TRIP_PAYMENT_SCHEDULE("Trip Payment Schedule"),
-    PAYMENT_OTP_VERIFICATION("Payment OTP Verification")
+    PAYMENT_OTP_VERIFICATION("Trip Start Payment (40%)")
 }
 
 @Composable
@@ -825,10 +825,10 @@ fun App() {
                         )
                     }
                     AppScreen.PAYMENT_OTP_VERIFICATION -> {
-                        // 6-digit bank authorization OTP verification for high-value milestone settlements
-                        PaymentOtpVerificationScreen(
+                        // Pay 40% Trip Start Milestone & UPI confirmation (trip-start-payment.svg)
+                        TripStartPaymentScreen(
                             viewModel = bookingFlowViewModel,
-                            onPaymentVerified = {
+                            onPaymentConfirmed = {
                                 toast("✓ Milestone Payment Verified Successfully!")
                                 navigateTo(AppScreen.BOOKING_ID_CONFIRMATION)
                             },
