@@ -34,6 +34,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.goindiacab.components.AdaptiveContainer
 import com.example.goindiacab.components.PillBadge
+import com.example.goindiacab.components.PlatformBackHandler
 import com.example.goindiacab.components.PrimaryButton
 import com.example.goindiacab.theme.*
 import goindiacab.app.shared.generated.resources.Res
@@ -71,6 +72,13 @@ fun OnboardingScreen(
 ) {
     val pagerState = rememberPagerState(initialPage = 0, pageCount = { onboardingSlides.size })
     val coroutineScope = rememberCoroutineScope()
+
+    // Handle back button on Onboarding pages
+    PlatformBackHandler(enabled = pagerState.currentPage > 0) {
+        coroutineScope.launch {
+            pagerState.animateScrollToPage(pagerState.currentPage - 1)
+        }
+    }
 
     AdaptiveContainer(backgroundColor = BackgroundWhite) {
         BoxWithConstraints(modifier = Modifier.fillMaxSize()) {

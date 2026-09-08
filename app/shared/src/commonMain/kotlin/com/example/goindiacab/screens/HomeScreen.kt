@@ -129,7 +129,22 @@ fun HomeScreen(
                                 drop = uiState.dropLocation,
                                 dateTime = uiState.pickupDateTime,
                                 vehicle = uiState.vehicleType,
-                                onSearchClick = { viewModel.searchCabs() }
+                                onPickupClick = onSelectPickupClick,
+                                onDropClick = {
+                                    if (uiState.pickupLocation.isBlank()) {
+                                        onSelectPickupClick()
+                                    } else {
+                                        onSelectDropClick()
+                                    }
+                                },
+                                onSearchClick = {
+                                    if (uiState.pickupLocation.isBlank()) {
+                                        onSelectPickupClick()
+                                    } else {
+                                        viewModel.searchCabs()
+                                        onOutstationClick()
+                                    }
+                                }
                             )
                             Spacer(modifier = Modifier.height(20.dp))
                         }
@@ -157,7 +172,10 @@ fun HomeScreen(
                                         key = { it.id },
                                         contentType = { "route_card" }
                                     ) { route ->
-                                        PopularRouteCard(route = route)
+                                        PopularRouteCard(
+                                            route = route,
+                                            onClick = { onPopularRouteClick(route) }
+                                        )
                                     }
                                 }
                             }

@@ -123,40 +123,36 @@ fun OtpVerificationScreen(
                                 append(phoneNumber)
                             }
                             append(" ")
-                        }
-                        Row(
-                            modifier = Modifier.fillMaxWidth(),
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            Text(
-                                text = subtitle,
-                                fontSize = 14.sp,
-                                lineHeight = 19.6.sp,
-                                fontWeight = FontWeight.Normal,
-                                fontFamily = dmSansFontFamily(),
-                                letterSpacing = 0.sp,
-                                color = TextMuted
-                            )
-                            Box(
-                                modifier = Modifier
-                                    .clickable(
-                                        interactionSource = remember { MutableInteractionSource() },
-                                        indication = null
-                                    ) { onEditPhoneClick() }
-                                    .padding(vertical = 4.dp, horizontal = 4.dp)
-                            ) {
-                                Text(
-                                    text = "Edit",
-                                    fontSize = 14.sp,
-                                    lineHeight = 19.6.sp,
-                                    fontWeight = FontWeight.Bold,
-                                    fontFamily = dmSansFontFamily(),
-                                    letterSpacing = 0.sp,
-                                    color = BrandOrange,
-                                    textDecoration = TextDecoration.Underline
+                            withLink(
+                                LinkAnnotation.Clickable(
+                                    tag = "EDIT",
+                                    styles = TextLinkStyles(
+                                        style = SpanStyle(
+                                            fontWeight = FontWeight.Bold,
+                                            fontFamily = dmSansFontFamily(),
+                                            fontSize = 14.sp,
+                                            letterSpacing = 0.sp,
+                                            color = BrandOrange,
+                                            textDecoration = TextDecoration.Underline
+                                        )
+                                    ),
+                                    linkInteractionListener = { onEditPhoneClick() }
                                 )
+                            ) {
+                                append("Edit")
                             }
                         }
+
+                        Text(
+                            text = subtitle,
+                            fontSize = 14.sp,
+                            lineHeight = 19.6.sp,
+                            fontWeight = FontWeight.Normal,
+                            fontFamily = dmSansFontFamily(),
+                            letterSpacing = 0.sp,
+                            color = TextMuted,
+                            modifier = Modifier.fillMaxWidth()
+                        )
                     }
 
                     OtpScreenMode.EXPIRED -> {
