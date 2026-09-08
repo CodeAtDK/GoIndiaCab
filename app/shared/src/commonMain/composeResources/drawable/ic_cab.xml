@@ -1,0 +1,44 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="48dp"
+    android:height="48dp"
+    android:viewportWidth="48"
+    android:viewportHeight="48">
+    <!-- Taxi Roof sign -->
+    <path
+        android:pathData="M20,6 L28,6"
+        android:strokeColor="#FFFFFF"
+        android:strokeWidth="2.5"
+        android:strokeLineCap="round" />
+    <!-- Windshield & Roof -->
+    <path
+        android:pathData="M38,18 L34,22 L31,14.6 C30.717,13.843 30.211,13.189 29.549,12.725 C28.887,12.261 28.1,12.008 27.292,12 L18.8,12 C17.985,11.981 17.184,12.212 16.504,12.661 C15.823,13.111 15.297,13.757 14.994,14.514 L12,22 L8,18"
+        android:strokeColor="#FFFFFF"
+        android:strokeWidth="2.5"
+        android:strokeLineCap="round"
+        android:strokeLineJoin="round" />
+    <!-- Hood line -->
+    <path
+        android:pathData="M12,22 L34,22"
+        android:strokeColor="#FFFFFF"
+        android:strokeWidth="2.5"
+        android:strokeLineCap="round" />
+    <!-- Body -->
+    <path
+        android:pathData="M34,22 C36.209,22 38,23.791 38,26 L38,34 C38,36.209 36.209,38 34,38 L12,38 C9.791,38 8,36.209 8,34 L8,26 C8,23.791 9.791,22 12,22"
+        android:strokeColor="#FFFFFF"
+        android:strokeWidth="2.5"
+        android:strokeLineCap="round"
+        android:strokeLineJoin="round" />
+    <!-- Wheels -->
+    <path
+        android:pathData="M12,38 L12,42 M34,38 L34,42"
+        android:strokeColor="#FFFFFF"
+        android:strokeWidth="2.5"
+        android:strokeLineCap="round" />
+    <!-- Headlights -->
+    <path
+        android:pathData="M15,30 A1.5,1.5 0 1,1 15.01,30 M31,30 A1.5,1.5 0 1,1 31.01,30"
+        android:strokeColor="#FFFFFF"
+        android:strokeWidth="2.5"
+        android:strokeLineCap="round" />
+</vector>

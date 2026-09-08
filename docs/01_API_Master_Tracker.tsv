@@ -1,0 +1,25 @@
+API ID	Module	Screen Name	HTTP Method	Endpoint	Auth Required	Priority	Phase	Status	Assignee	Target Date	Brief Description
+API-01	Auth & Session	Splash / Session Check	GET	/auth/session	Bearer Token	P0 (Critical)	Phase 1 - Prerequisite	Pending	Backend Team		Validate cached JWT on app launch; returns active ride if exists
+API-02	Auth & Session	Login	POST	/auth/send-otp	Public	P0 (Critical)	Phase 1 - Prerequisite	Pending	Backend Team		Send 6-digit verification code to mobile (SMS) or email
+API-03	Auth & Session	OTP Verification / Error	POST	/auth/verify-otp	Public	P0 (Critical)	Phase 1 - Prerequisite	Pending	Backend Team		Validate user-entered OTP, return JWT tokens and user profile
+API-04	Auth & Session	Resend OTP	POST	/auth/resend-otp	Public	P1 (High)	Phase 1 - Prerequisite	Pending	Backend Team		Re-trigger OTP delivery after countdown expiry
+API-05	Auth & Session	Login (Social)	POST	/auth/social-login	Public	P0 (Critical)	Phase 1 - Prerequisite	Pending	Backend Team		Validate Google/Apple ID token; check if phone is linked
+API-06	Auth & Session	Login (Phone Link)	POST	/auth/link-phone	Bearer Token	P0 (Critical)	Phase 1 - Prerequisite	Pending	Backend Team		Link verified mobile number to social login account
+API-07	Home Feed	Home Screen	GET	/home/feed	Bearer Token	P0 (Critical)	Phase 1 - Prerequisite	Pending	Backend Team		Return promo banners, active ride snippet, categories, recent routes
+API-08	Location & Maps	Pickup / Destination Search	GET	/location/autocomplete	Bearer Token	P0 (Critical)	Phase 1 - Prerequisite	Pending	Backend Team		Backend proxy for place search with lat/lng bias (Google Places)
+API-09	Location & Maps	Confirm Pickup Location - Map	GET	/location/reverse-geocode	Bearer Token	P0 (Critical)	Phase 1 - Prerequisite	Pending	Backend Team		Convert pin drop coordinates to human-readable street address
+API-10	Location & Maps	City Route Selection	GET	/outstation/popular-routes	Bearer Token	P1 (High)	Phase 1 - Prerequisite	Pending	Backend Team		Fetch popular outstation city routes with starting fares and photos
+API-11	Location & Maps	Route Confirmation	POST	/route/calculate	Bearer Token	P0 (Critical)	Phase 1 - Prerequisite	Pending	Backend Team		Calculate driving distance, duration, toll count, and map polyline
+API-12	Scheduling	Schedule / Date / Time Selection	GET	/rides/available-slots	Bearer Token	P1 (High)	Phase 2 - Booking Funnel	Pending	Backend Team		Available departure time slots, booking lead buffer, night charges
+API-13	Vehicle Fleet	Vehicle Partner Options	POST	/cabs/search	Bearer Token	P0 (Critical)	Phase 2 - Booking Funnel	Pending	Backend Team		Available cab tiers (Sedan, SUV, Innova) with live fare quotes & ETA
+API-14	Vehicle Fleet	Cab Detail Screen	GET	/cabs/{vehicleTypeId}/details	Bearer Token	P0 (Critical)	Phase 2 - Booking Funnel	Pending	Backend Team		Detailed cab specs, luggage/seating, inclusions, exclusions, cancel terms
+API-15	Fare & Booking	Fare Details / Summary	POST	/booking/fare-quote	Bearer Token	P0 (Critical)	Phase 2 - Booking Funnel	Pending	Backend Team		Detailed fare breakdown (Base, GST, Tolls, Advance 20% vs 100%)
+API-16	Fare & Booking	Apply Coupon	POST	/coupons/apply	Bearer Token	P1 (High)	Phase 2 - Booking Funnel	Pending	Backend Team		Validate promo code and return calculated discount
+API-17	Booking & Payment	Booking Confirmation / Pay	POST	/booking/create	Bearer Token	P0 (Critical)	Phase 2 - Booking Funnel	Pending	Backend Team		Create booking record and initialize Razorpay/gateway order
+API-18	Booking & Payment	Payment Processing / Failed	POST	/payment/verify	Bearer Token	P0 (Critical)	Phase 2 - Booking Funnel	Pending	Backend Team		Verify gateway payment signature and confirm booking
+API-19	Dispatch & Tracking	Partner Searching / Assigned	GET	/booking/{bookingId}/status	Bearer Token	P0 (Critical)	Phase 3 - Post Booking	Pending	Backend Team		Polling endpoint for driver allocation and start trip OTP
+API-20	Dispatch & Tracking	Booking ID Confirmation	GET	/booking/{bookingId}	Bearer Token	P0 (Critical)	Phase 3 - Post Booking	Pending	Backend Team		Full confirmed booking ticket, itinerary, driver details, payment recap
+API-21	Cancellation	Refund Initiated / Cancel	POST	/booking/{bookingId}/cancel	Bearer Token	P1 (High)	Phase 3 - Post Booking	Pending	Backend Team		Cancel ride, calculate cancellation fee, initiate refund transaction
+API-22	Milestones	Trip Payment Schedule	GET	/booking/{bookingId}/payment-schedule	Bearer Token	P1 (High)	Phase 3 - Post Booking	Pending	Backend Team		Milestone breakdown (20% advance, 50% at pickup, 30% at drop)
+API-23	Milestones	Pay Next Milestone	POST	/booking/{bookingId}/pay-milestone	Bearer Token	P1 (High)	Phase 3 - Post Booking	Pending	Backend Team		Create gateway order for paying the next milestone instalment
+API-24	Milestones	Payment OTP Verification	POST	/payment/verify-otp	Bearer Token	P1 (High)	Phase 3 - Post Booking	Pending	Backend Team		Verify driver-collected cash/milestone payment via customer OTP

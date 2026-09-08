@@ -1,0 +1,96 @@
+# ====================================================================
+# GoIndiaCab — Production-Grade .gitignore (Kotlin Multiplatform)
+# Covers: Android, Compose Multiplatform, Desktop (JVM), Web (Wasm/JS),
+# Ktor Server, iOS (Xcode), Gradle, IDEs, and Security/Secrets
+# ====================================================================
+
+# --------------------------------------------------------------------
+# 1. Gradle & Build Outputs
+# --------------------------------------------------------------------
+.gradle/
+build/
+**/build/
+!src/**/build/
+gradle-app.setting
+!gradle-wrapper.jar
+.gradletasknamecache
+
+# --------------------------------------------------------------------
+# 2. Kotlin Multiplatform & JS / Wasm
+# --------------------------------------------------------------------
+.kotlin/
+kotlin-js-store/
+node_modules/
+package-lock.json
+
+# --------------------------------------------------------------------
+# 3. Android Build & SDK Artifacts
+# --------------------------------------------------------------------
+local.properties
+captures/
+.externalNativeBuild/
+.cxx/
+output.json
+*.apk
+*.aab
+*.ap_
+*.dex
+
+# --------------------------------------------------------------------
+# 4. Security & Keystores (CRITICAL - NEVER COMMIT SECRETS)
+# --------------------------------------------------------------------
+*.jks
+*.keystore
+*.p8
+*.p12
+*.key
+*.pem
+secrets.properties
+google-services.json
+GoogleService-Info.plist
+
+# --------------------------------------------------------------------
+# 5. IDEs & Editors
+# --------------------------------------------------------------------
+# Android Studio / IntelliJ IDEA
+.idea/
+*.iml
+*.iws
+*.ipr
+out/
+
+# Visual Studio Code
+.vscode/
+
+# --------------------------------------------------------------------
+# 6. iOS / macOS / Xcode
+# --------------------------------------------------------------------
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+xcuserdata/
+DerivedData/
+*.xcscmblueprint
+*.hmap
+**/xcshareddata/WorkspaceSettings.xcsettings
+*.xcodeproj/*
+!*.xcodeproj/project.pbxproj
+!*.xcodeproj/xcshareddata/
+!*.xcodeproj/project.xcworkspace/
+!*.xcworkspace/contents.xcworkspacedata
+
+# CocoaPods & Carthage
+Pods/
+Carthage/Build/
+
+# --------------------------------------------------------------------
+# 7. Log files & Crash dumps
+# --------------------------------------------------------------------
+*.log
+*.hprof
+hs_err_pid*
+replay_pid*

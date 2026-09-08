@@ -1,0 +1,95 @@
+name: GoIndiaCab Release Pipeline
+
+on:
+  push:
+    tags:
+      - 'v*.*.*'
+  workflow_dispatch:
+    inputs:
+      version_name:
+        description: 'Release Version Name (e.g. v1.0.0)'
+        required: true
+        default: 'v1.0.0'
+      release_notes:
+        description: 'Release Highlights / Notes'
+        required: false
+        default: 'Production release of GoIndiaCab'
+
+permissions:
+  contents: write
+
+jobs:
+  build-and-release:
+    name: 🚀 Build & Publish Release
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up JDK 21
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '21'
+
+      - name: Setup Gradle Cache
+        uses: gradle/actions/setup-gradle@v4
+
+      - name: Setup Keystore (if secret is configured)
+        id: setup-keystore
+        run: |
+          if [ -n "${{ secrets.KEYSTORE_BASE64 }}" ]; then
+            echo "Keystore secret detected, decoding..."
+            echo "${{ secrets.KEYSTORE_BASE64 }}" | base64 --decode > app/androidApp/release.keystore
+            echo "has_keystore=true" >> $GITHUB_OUTPUT
+          else
+            echo "No keystore secret provided. Building unsigned release artifacts."
+            echo "has_keystore=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Build Android Release Artifacts (AAB & APK)
+        env:
+          KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
+          KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
+          KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
+        run: |
+          ./gradlew :app:androidApp:bundleRelease :app:androidApp:assembleRelease --no-daemon --stacktrace
+
+      - name: Locate & Rename Release Artifacts
+        id: artifacts
+        run: |
+          TAG_NAME="${{ github.ref_name }}"
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            TAG_NAME="${{ github.event.inputs.version_name }}"
+          fi
+
+          mkdir -p dist/
+          # Copy APK and AAB to distribution folder with versioned names
+          find app/androidApp/build/outputs/apk/release/ -name "*.apk" -exec cp {} dist/GoIndiaCab-${TAG_NAME}.apk \;
+          find app/androidApp/build/outputs/bundle/release/ -name "*.aab" -exec cp {} dist/GoIndiaCab-${TAG_NAME}.aab \;
+
+          echo "tag_name=${TAG_NAME}" >> $GITHUB_OUTPUT
+          ls -lh dist/
+
+      - name: Create GitHub Release & Attach Artifacts
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ steps.artifacts.outputs.tag_name }}
+          name: GoIndiaCab ${{ steps.artifacts.outputs.tag_name }}
+          body: |
+            ## GoIndiaCab Production Release — ${{ steps.artifacts.outputs.tag_name }}
+
+            ### What's Included:
+            - **Android App Bundle (.aab):** For Google Play Store submission
+            - **Universal APK (.apk):** For direct device installation and testing
+
+            *Automated build by GitHub Actions.*
+          files: |
+            dist/*.apk
+            dist/*.aab
+          draft: false
+          prerelease: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

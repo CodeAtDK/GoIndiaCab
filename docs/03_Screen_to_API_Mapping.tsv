@@ -1,0 +1,19 @@
+Screen File / Name	Screen Category	Primary API Call	Secondary API Call	Trigger Action	UI Behavior / Success State	Error / Retry Handling
+SessionCheckScreen.kt	Splash & Auth	GET /auth/session	None	App Start (On Launch)	If token valid: proceed to Home; If active ride: route to Booking Status; Else: Login	If 401: clear local cache, go to Login
+LoginScreen.kt	Splash & Auth	POST /auth/send-otp	POST /auth/social-login	Tap 'Get OTP' or Social Button	Navigate to OTP Verification screen with countdown timer (60s)	Show inline red error text; enable retry
+OtpVerificationScreen.kt	Splash & Auth	POST /auth/verify-otp	POST /auth/resend-otp	Enter 6th digit of OTP	Save JWT token to local encrypted storage, transition to Home screen	Vibrate device, clear OTP boxes, show 'Incorrect code'
+SocialLinkPhoneScreen.kt	Splash & Auth	POST /auth/send-otp	POST /auth/link-phone	Tap 'Verify Phone'	Link phone to social account and complete onboarding	Show error message if phone already in use
+HomeScreen.kt	Discovery	GET /home/feed	GET /outstation/popular-routes	Screen Initial Composition	Render banners carousel, active trip card, service type pills, recent routes	Pull-to-refresh; render cached offline feed if offline
+SearchDestinationScreen.kt	Location & Maps	GET /location/autocomplete	None	Typing in search box (300ms debounce)	Display suggestions list with landmark & distance	Show 'No places found' empty state
+ConfirmPickupLocationMapScreen.kt	Location & Maps	GET /location/reverse-geocode	POST /route/calculate	Map Drag End / Pin Drop	Update address card with short address and formatted string	Keep previous valid address if geocoding fails
+ScheduleRideScreen.kt	Scheduling	GET /rides/available-slots	None	Date or Time picker selection	Enable 'Confirm Time' button, display night fare alert if after 10 PM	Disable unavailable slots
+VehiclePartnerOptionsScreen.kt	Vehicle Selection	POST /cabs/search	None	Screen Load after Route Selection	Render vehicle category cards (Sedan, SUV, Innova) with prices and ETAs	Show 'No cabs available' banner with retry button
+CabDetailScreen.kt	Vehicle Selection	GET /cabs/{vehicleTypeId}/details	POST /booking/fare-quote	Card Tap from Vehicle Options	Display specs (seating, luggage), inclusions, exclusions, cancellation policy	Show retry card if details fail to load
+ApplyCouponScreen.kt	Fare & Booking	POST /coupons/apply	None	Tap 'Apply' button	Update total fare with discount; return to Summary screen	Show red snackbar with reason (e.g. min order required)
+BookingConfirmationScreen.kt	Booking & Payment	POST /booking/create	POST /payment/verify	Tap 'Proceed to Pay' button	Launch Razorpay / Gateway SDK with order details	Show payment failure screen with retry
+PaymentProcessingScreen.kt	Booking & Payment	POST /payment/verify	None	Payment Gateway Success Callback	Verify signature, transition to Partner Searching Screen	Redirect to Payment Failed Screen if signature invalid
+PartnerSearchingScreen.kt	Dispatch	GET /booking/{bookingId}/status	None	Poll every 4 seconds	Transition to Partner Assigned when status == 'ASSIGNED'	If timeout > 60s: show prompt to expand search radius
+PartnerAssignedScreen.kt	Dispatch	GET /booking/{bookingId}	None	On Driver Assignment	Display driver name, rating, vehicle license plate, and start OTP	Allow direct tap to call driver
+RefundInitiatedScreen.kt	Cancellation	POST /booking/{bookingId}/cancel	None	Tap 'Confirm Cancellation'	Show refund amount, transaction ref, and 3-5 days ETA	Show alert if cancellation fee applies
+TripPaymentScheduleScreen.kt	Milestones	GET /booking/{bookingId}/payment-schedule	POST /booking/{bookingId}/pay-milestone	Tap 'View Payment Schedule'	Show milestone timeline with paid, due, and pending instalments	Pull to refresh current balance
+PaymentOtpVerificationScreen.kt	Milestones	POST /payment/verify-otp	None	Driver collects cash & customer enters verification OTP	Mark milestone as PAID and update receipt	Show 'Incorrect OTP' attempt count
