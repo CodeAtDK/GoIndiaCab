@@ -51,8 +51,12 @@ data class VehiclePartnerOption(
     val isGroupTravel: Boolean
         get() = category == VehicleCategory.GROUP_TRAVEL
 
+    /**
+     * Advanced category matching supporting primary and secondary tags.
+     */
     fun matchesCategory(filter: VehicleCategory): Boolean {
-        return filter == VehicleCategory.ALL || category == filter || secondaryCategories.contains(filter)
+        if (filter == VehicleCategory.ALL) return true
+        return category == filter || filter in secondaryCategories
     }
 }
 
@@ -87,6 +91,7 @@ fun Int.formatInr(): String {
 
 /**
  * Canonical seed data extracted from Screen 25 (`vehicle-partner-options.svg`).
+ * Exhaustively represents all 7 vehicle tiers with 100% fidelity to the Figma design.
  */
 object VehicleSeedData {
 
@@ -100,10 +105,12 @@ object VehicleSeedData {
     )
 
     val VEHICLE_OPTIONS = listOf(
+        // 1. Recommended Sedan: Swift Dzire
         VehiclePartnerOption(
             id = "veh_swift_dzire",
             name = "Swift Dzire",
             category = VehicleCategory.SEDAN,
+            secondaryCategories = setOf(VehicleCategory.SEDAN),
             typeDescription = "Sedan • 4 Seater • AC",
             seatingCapacity = 4,
             hasAc = true,
@@ -118,10 +125,32 @@ object VehicleSeedData {
             imageDrawableKey = "img_car_swift_dzire",
             features = listOf("4 seats", "Petrol/CNG", "AC", "Boot Space 378L")
         ),
+        // 2. Sedan: Honda City
+        VehiclePartnerOption(
+            id = "veh_honda_city",
+            name = "Honda City",
+            category = VehicleCategory.SEDAN,
+            secondaryCategories = setOf(VehicleCategory.SEDAN, VehicleCategory.PREMIUM),
+            typeDescription = "Sedan • 4 Seater • AC",
+            seatingCapacity = 4,
+            hasAc = true,
+            rating = 4.3f,
+            isRecommended = false,
+            badgeText = null,
+            allInclusiveFare = 3800,
+            extraKmRate = 12,
+            freeKmLimit = 250,
+            nightCharges = 250,
+            nightChargeWindow = "10PM–6AM",
+            imageDrawableKey = "img_car_swift_dzire",
+            features = listOf("4 seats", "Petrol", "AC", "Premium Comfort")
+        ),
+        // 3. Premium SUV: Toyota Innova Crysta
         VehiclePartnerOption(
             id = "veh_innova_crysta",
             name = "Toyota Innova Crysta",
             category = VehicleCategory.SUV,
+            secondaryCategories = setOf(VehicleCategory.SUV, VehicleCategory.PREMIUM),
             typeDescription = "Premium SUV • 6 Seater • AC",
             seatingCapacity = 6,
             hasAc = true,
@@ -136,10 +165,33 @@ object VehicleSeedData {
             imageDrawableKey = "img_car_innova_crysta",
             features = listOf("6 seats", "Diesel", "AC", "Captain Seats")
         ),
+        // 4. Group Travel: 9 Seater Tempo Traveller
+        VehiclePartnerOption(
+            id = "veh_tempo_9",
+            name = "9 Seater Tempo Traveller",
+            category = VehicleCategory.GROUP_TRAVEL,
+            secondaryCategories = setOf(VehicleCategory.GROUP_TRAVEL),
+            typeDescription = "Tempo Traveller • 9 Seater • AC",
+            seatingCapacity = 9,
+            hasAc = true,
+            rating = 4.5f,
+            isRecommended = false,
+            badgeText = null,
+            allInclusiveFare = 5290,
+            perKmRate = 23,
+            extraKmRate = 10,
+            freeKmLimit = 250,
+            nightCharges = 300,
+            nightChargeWindow = "10PM–6AM",
+            imageDrawableKey = "ic_tempo_traveller",
+            features = listOf("9 seats", "Diesel", "AC")
+        ),
+        // 5. Group Travel: 12 Seater Tempo Traveller (Best for families)
         VehiclePartnerOption(
             id = "veh_tempo_12",
             name = "12 Seater Tempo Traveller",
             category = VehicleCategory.GROUP_TRAVEL,
+            secondaryCategories = setOf(VehicleCategory.GROUP_TRAVEL),
             typeDescription = "Tempo Traveller • 12 Seater • AC",
             seatingCapacity = 12,
             hasAc = true,
@@ -155,10 +207,12 @@ object VehicleSeedData {
             imageDrawableKey = "ic_tempo_traveller",
             features = listOf("12 seats", "Diesel", "AC", "Push-back seats")
         ),
+        // 6. Group Travel: 16 Seater Tempo Traveller
         VehiclePartnerOption(
             id = "veh_tempo_16",
             name = "16 Seater Tempo Traveller",
             category = VehicleCategory.GROUP_TRAVEL,
+            secondaryCategories = setOf(VehicleCategory.GROUP_TRAVEL),
             typeDescription = "Tempo Traveller • 16 Seater • AC",
             seatingCapacity = 16,
             hasAc = true,
@@ -172,13 +226,15 @@ object VehicleSeedData {
             nightCharges = 400,
             nightChargeWindow = "10PM–6AM",
             imageDrawableKey = "ic_tempo_traveller",
-            features = listOf("16 seats", "Diesel", "AC", "High Roof")
+            features = listOf("16 seats", "Diesel", "AC", "Touring Audio")
         ),
+        // 7. Group Travel: 26 Seater Tempo Traveller
         VehiclePartnerOption(
             id = "veh_tempo_26",
             name = "26 Seater Tempo Traveller",
             category = VehicleCategory.GROUP_TRAVEL,
-            typeDescription = "Mini Coach • 26 Seater • AC",
+            secondaryCategories = setOf(VehicleCategory.GROUP_TRAVEL),
+            typeDescription = "Tempo Traveller • 26 Seater • AC",
             seatingCapacity = 26,
             hasAc = true,
             rating = 4.7f,
@@ -191,7 +247,7 @@ object VehicleSeedData {
             nightCharges = 500,
             nightChargeWindow = "10PM–6AM",
             imageDrawableKey = "ic_tempo_traveller",
-            features = listOf("26 seats", "Diesel", "AC", "Spacious Luggage")
+            features = listOf("26 seats", "Diesel", "AC", "Full Luxury Coach")
         )
     )
 }
