@@ -4,6 +4,7 @@ import com.example.goindiacab.data.models.GeoPoint
 import com.example.goindiacab.data.models.LocationCategory
 import com.example.goindiacab.data.models.LocationItem
 import com.example.goindiacab.data.models.RecentDestinationItem
+import com.example.goindiacab.data.models.ReverseGeocodeResult
 import com.example.goindiacab.util.ioDispatcher
 import io.ktor.client.*
 import io.ktor.client.call.*
@@ -132,6 +133,48 @@ class GooglePlacesService(
                 distanceKm = dist
             )
         }
+    }
+
+    /**
+     * Reverse geocodes coordinates to street address and city via Google Geocoding API if key is present.
+     */
+    suspend fun reverseGeocode(point: GeoPoint): ReverseGeocodeResult? = withContext(ioDispatcher) {
+        val apiKey = GoogleMapsConfig.API_KEY.trim()
+        if (apiKey.isNotBlank() && !apiKey.startsWith("YOUR_")) {
+            try {
+                val url = "${GoogleMapsConfig.GEOCODE_URL}?latlng=${point.latitude},${point.longitude}&key=$apiKey"
+                val response = httpClient.get(url)
+                if (response.status.isSuccess()) {
+                    val bodyText = response.bodyAsText()
+                    val result = jsonParser.decodeFromString<GoogleGeocodeResponse>(bodyText)
+                    if (result.status == "OK" && result.results.isNotEmpty()) {
+                        val first = result.results.first()
+                        val title = first.addressComponents.firstOrNull { comp ->
+                            comp.types.any { it in listOf("point_of_interest", "establishment", "sublocality", "route", "premise") }
+                        }?.longName ?: first.formattedAddress.substringBefore(",")
+
+                        val city = first.addressComponents.firstOrNull { comp ->
+                            comp.types.any { it in listOf("locality", "administrative_area_level_2") }
+                        }?.longName ?: "India"
+
+                        val postal = first.addressComponents.firstOrNull { comp ->
+                            comp.types.contains("postal_code")
+                        }?.longName ?: ""
+
+                        return@withContext ReverseGeocodeResult(
+                            title = title.ifBlank { "Current Location" },
+                            fullAddress = first.formattedAddress,
+                            point = point,
+                            city = city,
+                            postalCode = postal
+                        )
+                    }
+                }
+            } catch (_: Exception) {
+                // Fallback to local intelligent geocoding
+            }
+        }
+        null
     }
 
     private fun estimateCoordinates(name: String): GeoPoint {

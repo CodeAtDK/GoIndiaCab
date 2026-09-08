@@ -29,3 +29,27 @@ data class GoogleStructuredFormatting(
     @SerialName("main_text") val mainText: String = "",
     @SerialName("secondary_text") val secondaryText: String = ""
 )
+
+@Immutable
+@Serializable
+data class GoogleGeocodeResponse(
+    val status: String = "",
+    val results: List<GoogleGeocodeResult> = emptyList(),
+    @SerialName("error_message") val errorMessage: String? = null
+)
+
+@Immutable
+@Serializable
+data class GoogleGeocodeResult(
+    @SerialName("formatted_address") val formattedAddress: String = "",
+    @SerialName("address_components") val addressComponents: List<GoogleAddressComponent> = emptyList()
+)
+
+@Immutable
+@Serializable
+data class GoogleAddressComponent(
+    @SerialName("long_name") val longName: String = "",
+    @SerialName("short_name") val shortName: String = "",
+    val types: List<String> = emptyList()
+)
+

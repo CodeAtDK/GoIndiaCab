@@ -40,27 +40,40 @@ class LocationApiServiceImpl(
 
     override suspend fun reverseGeocode(point: GeoPoint): NetworkResult<ReverseGeocodeResult> = withContext(ioDispatcher) {
         try {
-            // High fidelity reverse geocoding with simulated network latency
-            delay(200)
+            // 1. Live Google Geocoding if API key is active
+            val liveResult = placesService.reverseGeocode(point)
+            if (liveResult != null) {
+                return@withContext NetworkResult.Success(liveResult)
+            }
 
-            // Determine if coordinates are near Connaught place or other landmark
-            val latDiff = kotlin.math.abs(point.latitude - GeoPoint.CONNAUGHT_PLACE.latitude)
-            val lngDiff = kotlin.math.abs(point.longitude - GeoPoint.CONNAUGHT_PLACE.longitude)
+            // 2. Intelligent geographic nearest-neighbor match across 80+ Indian cities & hubs
+            delay(150)
+            val nearest = GooglePlacesService.ALL_INDIAN_LOCATIONS.minByOrNull { loc ->
+                val dLat = loc.point.latitude - point.latitude
+                val dLng = loc.point.longitude - point.longitude
+                dLat * dLat + dLng * dLng
+            }
 
-            val result = if (latDiff < 0.015 && lngDiff < 0.015) {
+            val dLat = (nearest?.point?.latitude ?: 0.0) - point.latitude
+            val dLng = (nearest?.point?.longitude ?: 0.0) - point.longitude
+            val degDist = kotlin.math.sqrt(dLat * dLat + dLng * dLng)
+            val distKm = degDist * 111.0
+
+            val result = if (nearest != null && distKm < 35.0) {
+                val title = if (distKm < 1.0) nearest.title else "Near ${nearest.title}"
                 ReverseGeocodeResult(
-                    title = "Current Location",
-                    fullAddress = "Near Central City Point",
+                    title = title,
+                    fullAddress = "${nearest.subtitle} (${point.latitude.toString().take(7)}, ${point.longitude.toString().take(7)})",
                     point = point,
-                    city = "Delhi NCR",
+                    city = nearest.subtitle.substringAfterLast(",").trim().ifBlank { nearest.title },
                     postalCode = "110001"
                 )
             } else {
                 ReverseGeocodeResult(
                     title = "Selected Location",
-                    fullAddress = "Near Pin Location, Coordinates (${point.latitude.toString().take(6)}, ${point.longitude.toString().take(6)})",
+                    fullAddress = "Coordinates (${point.latitude.toString().take(7)}, ${point.longitude.toString().take(7)})",
                     point = point,
-                    city = "Delhi NCR",
+                    city = "India",
                     postalCode = "110001"
                 )
             }

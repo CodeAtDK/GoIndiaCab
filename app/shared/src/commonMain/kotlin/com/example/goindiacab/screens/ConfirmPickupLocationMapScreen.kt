@@ -38,6 +38,7 @@ import androidx.compose.ui.unit.sp
 import com.example.goindiacab.components.AdaptiveContainer
 import com.example.goindiacab.components.PlatformBackHandler
 import com.example.goindiacab.components.PlatformMapView
+import com.example.goindiacab.components.rememberLocationPermissionRequester
 import com.example.goindiacab.data.models.LocationItem
 import com.example.goindiacab.di.AppContainer
 import com.example.goindiacab.theme.BrandBlue
@@ -76,6 +77,15 @@ fun ConfirmPickupLocationMapScreen(
     }
 
     val uiState by viewModel.uiState.collectAsState()
+
+    val requestLocationPermission = rememberLocationPermissionRequester(
+        onGranted = {
+            viewModel.recenterToGps()
+        },
+        onDenied = {
+            viewModel.recenterToGps()
+        }
+    )
 
     // Hardware & system back button support
     PlatformBackHandler(enabled = true) {
@@ -157,7 +167,7 @@ fun ConfirmPickupLocationMapScreen(
 
                 // GPS Recenter FAB
                 Surface(
-                    onClick = { viewModel.recenterToGps() },
+                    onClick = { requestLocationPermission() },
                     shape = RoundedCornerShape(12.dp),
                     color = SurfaceGray,
                     border = BorderStroke(1.dp, Color(0xFFE5E7EB)),

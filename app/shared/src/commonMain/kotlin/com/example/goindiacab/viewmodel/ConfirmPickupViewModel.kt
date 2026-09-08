@@ -131,7 +131,13 @@ class ConfirmPickupViewModel(
 
     fun onZoomChange(zoomDelta: Float) {
         _uiState.update { current ->
-            val newZoom = (current.mapZoom * zoomDelta).coerceIn(1.0f, 3.0f)
+            val newZoom = if (zoomDelta > 1.05f) {
+                current.mapZoom + 1.0f
+            } else if (zoomDelta < 0.95f) {
+                current.mapZoom - 1.0f
+            } else {
+                current.mapZoom + zoomDelta
+            }.coerceIn(4.0f, 20.0f)
             current.copy(mapZoom = newZoom)
         }
     }
@@ -139,12 +145,11 @@ class ConfirmPickupViewModel(
     fun recenterToGps() {
         _uiState.update {
             it.copy(
-                targetPoint = GeoPoint.CONNAUGHT_PLACE,
-                locationTitle = "Connaught Place",
-                fullAddress = "Connaught Place, New Delhi, 110001",
+                recenterTrigger = it.recenterTrigger + 1,
+                isReverseGeocoding = true,
                 mapOffsetX = 0f,
                 mapOffsetY = 0f,
-                mapZoom = 1.0f,
+                mapZoom = 16.5f,
                 isDragging = false
             )
         }

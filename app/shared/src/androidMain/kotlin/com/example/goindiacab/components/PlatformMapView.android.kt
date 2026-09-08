@@ -14,6 +14,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import com.google.android.gms.location.LocationServices
+import com.google.android.gms.location.Priority
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.MapView
@@ -57,45 +58,95 @@ actual fun PlatformMapView(
         }
     }
 
-    val fineGranted = ContextCompat.checkSelfPermission(
-        context,
-        Manifest.permission.ACCESS_FINE_LOCATION
-    ) == PackageManager.PERMISSION_GRANTED
+    // Handle smooth zoom changes from UI controls
+    LaunchedEffect(zoom) {
+        googleMapRef?.let { map ->
+            val currentZoom = map.cameraPosition.zoom
+            if (kotlin.math.abs(currentZoom - zoom) > 0.3f) {
+                map.animateCamera(CameraUpdateFactory.zoomTo(zoom))
+            }
+        }
+    }
 
-    val coarseGranted = ContextCompat.checkSelfPermission(
-        context,
-        Manifest.permission.ACCESS_COARSE_LOCATION
-    ) == PackageManager.PERMISSION_GRANTED
-
-    val hasLocationPermission = fineGranted || coarseGranted
-
-    // Handle recenter when trigger changes or initial load
+    // Handle recenter when trigger changes
     LaunchedEffect(recenterTrigger, googleMapRef) {
         val map = googleMapRef ?: return@LaunchedEffect
         if (recenterTrigger > 0) {
-            if (hasLocationPermission) {
+            val isPermitted = ContextCompat.checkSelfPermission(
+                context,
+                Manifest.permission.ACCESS_FINE_LOCATION
+            ) == PackageManager.PERMISSION_GRANTED || ContextCompat.checkSelfPermission(
+                context,
+                Manifest.permission.ACCESS_COARSE_LOCATION
+            ) == PackageManager.PERMISSION_GRANTED
+
+            if (isPermitted) {
+                try {
+                    if (!map.isMyLocationEnabled && isMyLocationEnabled) {
+                        map.isMyLocationEnabled = true
+                    }
+                } catch (_: SecurityException) {}
+
                 try {
                     val fusedClient = LocationServices.getFusedLocationProviderClient(context)
-                    fusedClient.lastLocation.addOnSuccessListener { loc ->
-                        if (loc != null) {
-                            val userLatLng = LatLng(loc.latitude, loc.longitude)
-                            map.animateCamera(CameraUpdateFactory.newLatLngZoom(userLatLng, 16.5f))
-                            onCameraIdle(loc.latitude, loc.longitude)
-                        } else {
-                            map.animateCamera(
-                                CameraUpdateFactory.newLatLngZoom(LatLng(latitude, longitude), zoom)
-                            )
+                    // Request high accuracy current location fix from GPS
+                    fusedClient.getCurrentLocation(Priority.PRIORITY_HIGH_ACCURACY, null)
+                        .addOnSuccessListener { loc ->
+                            if (loc != null) {
+                                val userLatLng = LatLng(loc.latitude, loc.longitude)
+                                map.animateCamera(CameraUpdateFactory.newLatLngZoom(userLatLng, 16.5f))
+                                onCameraIdle(loc.latitude, loc.longitude)
+                            } else {
+                                // Fallback to last known location if instant fix is not cached
+                                fusedClient.lastLocation.addOnSuccessListener { fallbackLoc ->
+                                    if (fallbackLoc != null) {
+                                        val userLatLng = LatLng(fallbackLoc.latitude, fallbackLoc.longitude)
+                                        map.animateCamera(CameraUpdateFactory.newLatLngZoom(userLatLng, 16.5f))
+                                        onCameraIdle(fallbackLoc.latitude, fallbackLoc.longitude)
+                                    } else {
+                                        map.animateCamera(
+                                            CameraUpdateFactory.newLatLngZoom(LatLng(latitude, longitude), zoom)
+                                        )
+                                        onCameraIdle(latitude, longitude)
+                                    }
+                                }.addOnFailureListener {
+                                    map.animateCamera(
+                                        CameraUpdateFactory.newLatLngZoom(LatLng(latitude, longitude), zoom)
+                                    )
+                                    onCameraIdle(latitude, longitude)
+                                }
+                            }
                         }
-                    }
+                        .addOnFailureListener {
+                            fusedClient.lastLocation.addOnSuccessListener { fallbackLoc ->
+                                if (fallbackLoc != null) {
+                                    val userLatLng = LatLng(fallbackLoc.latitude, fallbackLoc.longitude)
+                                    map.animateCamera(CameraUpdateFactory.newLatLngZoom(userLatLng, 16.5f))
+                                    onCameraIdle(fallbackLoc.latitude, fallbackLoc.longitude)
+                                } else {
+                                    map.animateCamera(
+                                        CameraUpdateFactory.newLatLngZoom(LatLng(latitude, longitude), zoom)
+                                    )
+                                    onCameraIdle(latitude, longitude)
+                                }
+                            }.addOnFailureListener {
+                                map.animateCamera(
+                                    CameraUpdateFactory.newLatLngZoom(LatLng(latitude, longitude), zoom)
+                                )
+                                onCameraIdle(latitude, longitude)
+                            }
+                        }
                 } catch (_: SecurityException) {
                     map.animateCamera(
                         CameraUpdateFactory.newLatLngZoom(LatLng(latitude, longitude), zoom)
                     )
+                    onCameraIdle(latitude, longitude)
                 }
             } else {
                 map.animateCamera(
                     CameraUpdateFactory.newLatLngZoom(LatLng(latitude, longitude), zoom)
                 )
+                onCameraIdle(latitude, longitude)
             }
         }
     }
@@ -113,7 +164,15 @@ actual fun PlatformMapView(
                     gMap.uiSettings.isRotateGesturesEnabled = true
                     gMap.uiSettings.isTiltGesturesEnabled = true
 
-                    if (hasLocationPermission && isMyLocationEnabled) {
+                    val isPermitted = ContextCompat.checkSelfPermission(
+                        context,
+                        Manifest.permission.ACCESS_FINE_LOCATION
+                    ) == PackageManager.PERMISSION_GRANTED || ContextCompat.checkSelfPermission(
+                        context,
+                        Manifest.permission.ACCESS_COARSE_LOCATION
+                    ) == PackageManager.PERMISSION_GRANTED
+
+                    if (isPermitted && isMyLocationEnabled) {
                         try {
                             gMap.isMyLocationEnabled = true
                         } catch (_: SecurityException) {}
@@ -135,8 +194,16 @@ actual fun PlatformMapView(
             }
         },
         update = {
+            val isPermitted = ContextCompat.checkSelfPermission(
+                context,
+                Manifest.permission.ACCESS_FINE_LOCATION
+            ) == PackageManager.PERMISSION_GRANTED || ContextCompat.checkSelfPermission(
+                context,
+                Manifest.permission.ACCESS_COARSE_LOCATION
+            ) == PackageManager.PERMISSION_GRANTED
+
             googleMapRef?.let { gMap ->
-                if (hasLocationPermission && isMyLocationEnabled) {
+                if (isPermitted && isMyLocationEnabled) {
                     try {
                         if (!gMap.isMyLocationEnabled) {
                             gMap.isMyLocationEnabled = true
