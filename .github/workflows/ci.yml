@@ -140,17 +140,17 @@ jobs:
             const runUrl = `https://github.com/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}`;
             const body = `### 🚀 GoIndiaCab CI — Testing Build Ready!
 
-| Check / Artifact | Status | Details |
-|---|---|---|
-| 🔍 **Android Lint** | ✅ Passed | Code quality verified |
-| 🧪 **Unit Tests** | ✅ Passed | All test suites green |
-| 📱 **Debug Test APK** | 📦 Generated | Ready for device testing |
-| 📦 **Release Bundle (AAB)** | 📦 Generated | Play Store test bundle |
+            | Check / Artifact | Status | Details |
+            |---|---|---|
+            | 🔍 **Android Lint** | ✅ Passed | Code quality verified |
+            | 🧪 **Unit Tests** | ✅ Passed | All test suites green |
+            | 📱 **Debug Test APK** | 📦 Generated | Ready for device testing |
+            | 📦 **Release Bundle (AAB)** | 📦 Generated | Play Store test bundle |
 
-📲 **QA Testers:** You can download the latest **Testing APK** directly from this run:
-🔗 [Open Build Run & Download Artifacts](${runUrl})
+            📲 **QA Testers:** You can download the latest **Testing APK** directly from this run:
+            🔗 [Open Build Run & Download Artifacts](${runUrl})
 
-*Automated by GoIndiaCab CI Bot · Commit: \`${context.sha.substring(0, 7)}\`*`;
+            *Automated by GoIndiaCab CI Bot · Commit: \`${context.sha.substring(0, 7)}\`*`;
 
             await github.rest.issues.createComment({
               issue_number: context.issue.number,
