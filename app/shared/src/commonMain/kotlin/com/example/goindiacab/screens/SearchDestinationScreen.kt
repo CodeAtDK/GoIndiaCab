@@ -29,6 +29,7 @@ import com.example.goindiacab.data.models.PopularGetawayItem
 import com.example.goindiacab.data.models.RecentDestinationItem
 import com.example.goindiacab.di.AppContainer
 import com.example.goindiacab.theme.BrandOrange
+import com.example.goindiacab.theme.SurfaceGray
 import com.example.goindiacab.theme.TextDark
 import com.example.goindiacab.theme.TextMuted
 import com.example.goindiacab.theme.dmSansFontFamily
@@ -68,7 +69,7 @@ fun SearchDestinationScreen(
 
     AdaptiveContainer {
         Scaffold(
-            containerColor = Color(0xFFF8FAFC),
+            containerColor = SurfaceGray,
             topBar = {
                 OutstationTopBar(
                     title = "Search Destination",
@@ -89,8 +90,8 @@ fun SearchDestinationScreen(
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(horizontal = 16.dp)
-                            .height(56.dp),
-                        shape = RoundedCornerShape(14.dp),
+                            .height(52.dp),
+                        shape = RoundedCornerShape(12.dp),
                         color = Color.White,
                         border = BorderStroke(2.dp, BrandOrange),
                         shadowElevation = 0.dp

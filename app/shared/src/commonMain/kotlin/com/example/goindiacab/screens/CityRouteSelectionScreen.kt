@@ -25,6 +25,7 @@ import com.example.goindiacab.data.models.PopularRouteFare
 import com.example.goindiacab.di.AppContainer
 import com.example.goindiacab.theme.BrandBlue
 import com.example.goindiacab.theme.BrandOrange
+import com.example.goindiacab.theme.SurfaceGray
 import com.example.goindiacab.theme.TextDark
 import com.example.goindiacab.theme.TextMuted
 import com.example.goindiacab.theme.dmSansFontFamily
@@ -72,7 +73,7 @@ fun CityRouteSelectionScreen(
 
     AdaptiveContainer {
         Scaffold(
-            containerColor = Color(0xFFF8FAFC),
+            containerColor = SurfaceGray,
             topBar = {
                 OutstationTopBar(
                     title = "Select Outstation Route",
@@ -86,33 +87,37 @@ fun CityRouteSelectionScreen(
                     .padding(paddingValues),
                 contentPadding = PaddingValues(bottom = 24.dp)
             ) {
-                // 1. Trip Mode Segmented Tabs Row
+                // 1. Trip Mode Segmented Tabs Row (White container strip matching SVG 18)
                 item {
-                    Spacer(modifier = Modifier.height(14.dp))
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(horizontal = 16.dp),
-                        horizontalArrangement = Arrangement.spacedBy(8.dp)
+                    Surface(
+                        color = Color.White,
+                        modifier = Modifier.fillMaxWidth()
                     ) {
-                        OutstationTripType.entries.forEach { tripType ->
-                            val isSelected = uiState.selectedTripType == tripType
-                            Surface(
-                                onClick = { viewModel.selectTripType(tripType) },
-                                shape = RoundedCornerShape(10.dp),
-                                color = if (isSelected) BrandBlue else Color(0xFFF1F5F9),
-                                modifier = Modifier
-                                    .weight(1f)
-                                    .height(40.dp)
-                            ) {
-                                Box(contentAlignment = Alignment.Center) {
-                                    Text(
-                                        text = tripType.title,
-                                        fontSize = 12.sp,
-                                        fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Medium,
-                                        fontFamily = dmSansFontFamily(),
-                                        color = if (isSelected) Color.White else Color(0xFF475569)
-                                    )
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(horizontal = 16.dp, vertical = 11.dp),
+                            horizontalArrangement = Arrangement.spacedBy(8.dp)
+                        ) {
+                            OutstationTripType.entries.forEach { tripType ->
+                                val isSelected = uiState.selectedTripType == tripType
+                                Surface(
+                                    onClick = { viewModel.selectTripType(tripType) },
+                                    shape = RoundedCornerShape(8.dp),
+                                    color = if (isSelected) BrandBlue else SurfaceGray,
+                                    modifier = Modifier
+                                        .weight(1f)
+                                        .height(34.dp)
+                                ) {
+                                    Box(contentAlignment = Alignment.Center) {
+                                        Text(
+                                            text = tripType.title,
+                                            fontSize = 12.sp,
+                                            fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Medium,
+                                            fontFamily = dmSansFontFamily(),
+                                            color = if (isSelected) Color.White else TextDark
+                                        )
+                                    }
                                 }
                             }
                         }
@@ -342,7 +347,7 @@ private fun PopularCityCard(
                 modifier = Modifier
                     .size(44.dp)
                     .clip(CircleShape)
-                    .background(Color(0xFFF8FAFC))
+                    .background(SurfaceGray)
                     .border(1.dp, Color(0xFFE2E8F0), CircleShape),
                 contentAlignment = Alignment.Center
             ) {

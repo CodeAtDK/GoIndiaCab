@@ -28,6 +28,8 @@ import com.example.goindiacab.components.AdaptiveContainer
 import com.example.goindiacab.components.PlatformBackHandler
 import com.example.goindiacab.data.models.LocationItem
 import com.example.goindiacab.di.AppContainer
+import com.example.goindiacab.theme.BackgroundWhite
+import com.example.goindiacab.theme.SurfaceGray
 import com.example.goindiacab.theme.BrandBlue
 import com.example.goindiacab.theme.TextDark
 import com.example.goindiacab.theme.TextMuted
@@ -66,7 +68,7 @@ fun PickupLocationSelectionScreen(
         onBackClick()
     }
 
-    AdaptiveContainer {
+    AdaptiveContainer(backgroundColor = BackgroundWhite) {
         Scaffold(
             containerColor = Color.White,
             modifier = Modifier.fillMaxSize()
@@ -314,8 +316,8 @@ fun PickupLocationSelectionScreen(
                             Box(
                                 modifier = Modifier
                                     .size(36.dp)
-                                    .clip(CircleShape)
-                                    .background(Color.White.copy(alpha = 0.7f)),
+                                    .clip(RoundedCornerShape(12.dp))
+                                    .background(SurfaceGray),
                                 contentAlignment = Alignment.Center
                             ) {
                                 Icon(

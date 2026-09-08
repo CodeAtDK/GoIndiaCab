@@ -65,7 +65,8 @@ fun FareDetailsScreen(
     }
 
     AdaptiveContainer(
-        modifier = modifier.fillMaxSize().background(ColorBg)
+        modifier = modifier.fillMaxSize(),
+        backgroundColor = ColorBg
     ) {
         Column(
             modifier = Modifier.fillMaxSize()

@@ -71,9 +71,8 @@ fun PaymentOtpVerificationScreen(
     }
 
     AdaptiveContainer(
-        modifier = modifier
-            .fillMaxSize()
-            .background(ColorBgLight)
+        modifier = modifier.fillMaxSize(),
+        backgroundColor = ColorBgLight
     ) {
         Column(
             modifier = Modifier

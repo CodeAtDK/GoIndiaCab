@@ -124,13 +124,10 @@ fun PaymentProcessingScreen(
     )
 
     AdaptiveContainer(
-        modifier = modifier
-            .fillMaxSize()
-            .background(
-                Brush.verticalGradient(
-                    colors = listOf(ColorNavyDark, ColorNavyMedium, Color(0xFF06142E))
-                )
-            )
+        modifier = modifier.fillMaxSize(),
+        backgroundBrush = Brush.verticalGradient(
+            colors = listOf(ColorNavyDark, ColorNavyMedium, Color(0xFF06142E))
+        )
     ) {
         Column(
             modifier = Modifier

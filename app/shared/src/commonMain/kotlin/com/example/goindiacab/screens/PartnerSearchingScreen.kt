@@ -144,13 +144,10 @@ fun PartnerSearchingScreen(
     val advanceAmount = session.fareBreakdown.advanceDepositAmount
 
     AdaptiveContainer(
-        modifier = modifier
-            .fillMaxSize()
-            .background(
-                Brush.verticalGradient(
-                    colors = listOf(ColorNavyDark, Color(0xFF0A1B38), Color(0xFF061124))
-                )
-            )
+        modifier = modifier.fillMaxSize(),
+        backgroundBrush = Brush.verticalGradient(
+            colors = listOf(ColorNavyDark, Color(0xFF0A1B38), Color(0xFF061124))
+        )
     ) {
         Column(
             modifier = Modifier

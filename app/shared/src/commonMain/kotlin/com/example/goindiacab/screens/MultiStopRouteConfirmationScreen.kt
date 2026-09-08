@@ -19,10 +19,13 @@ import com.example.goindiacab.components.AdaptiveContainer
 import com.example.goindiacab.components.PlatformBackHandler
 import com.example.goindiacab.data.models.RouteStopItem
 import com.example.goindiacab.di.AppContainer
+import com.example.goindiacab.theme.BadgeOrangeText
+import com.example.goindiacab.theme.BadgePeachBg
 import com.example.goindiacab.theme.BrandBlue
 import com.example.goindiacab.theme.BrandOrange
 import com.example.goindiacab.theme.MarkerGreen
 import com.example.goindiacab.theme.MarkerOrange
+import com.example.goindiacab.theme.SurfaceGray
 import com.example.goindiacab.theme.TextDark
 import com.example.goindiacab.theme.TextMuted
 import com.example.goindiacab.theme.dmSansFontFamily
@@ -64,7 +67,7 @@ fun MultiStopRouteConfirmationScreen(
 
     AdaptiveContainer {
         Scaffold(
-            containerColor = Color(0xFFF8FAFC),
+            containerColor = SurfaceGray,
             topBar = {
                 OutstationTopBar(
                     title = "Plan Your Route",
@@ -163,7 +166,7 @@ fun MultiStopRouteConfirmationScreen(
                                 Box(
                                     modifier = Modifier
                                         .clip(RoundedCornerShape(6.dp))
-                                        .background(Color(0xFFFFF7ED))
+                                        .background(BadgePeachBg)
                                         .padding(horizontal = 8.dp, vertical = 4.dp)
                                 ) {
                                     Text(
@@ -171,7 +174,7 @@ fun MultiStopRouteConfirmationScreen(
                                         fontSize = 10.sp,
                                         fontWeight = FontWeight.Bold,
                                         fontFamily = outfitFontFamily(),
-                                        color = Color(0xFFEA580C)
+                                        color = BadgeOrangeText
                                     )
                                 }
                             }
@@ -195,7 +198,7 @@ fun MultiStopRouteConfirmationScreen(
                                 Surface(
                                     onClick = { showAddStopDialog = true },
                                     shape = RoundedCornerShape(8.dp),
-                                    color = Color(0xFFFFF7ED),
+                                    color = SurfaceGray,
                                     modifier = Modifier.height(36.dp)
                                 ) {
                                     Row(

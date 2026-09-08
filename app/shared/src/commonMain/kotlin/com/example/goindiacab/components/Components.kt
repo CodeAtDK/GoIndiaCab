@@ -49,7 +49,7 @@ import org.jetbrains.compose.resources.painterResource
 @Composable
 fun AdaptiveContainer(
     modifier: Modifier = Modifier,
-    backgroundColor: Color = BackgroundWhite,
+    backgroundColor: Color = SurfaceGray,
     backgroundBrush: androidx.compose.ui.graphics.Brush? = null,
     content: @Composable BoxScope.() -> Unit
 ) {

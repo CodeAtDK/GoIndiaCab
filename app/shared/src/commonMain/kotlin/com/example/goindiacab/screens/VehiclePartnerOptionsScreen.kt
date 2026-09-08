@@ -50,7 +50,7 @@ private val SelectedBlueBorder = Color(0xFF2563EB)
 private val RecommendedGreenBg = Color(0xFFE6F7F0)
 private val RecommendedGreenText = Color(0xFF059669)
 private val CardBorderColor = Color(0xFFE2E8F0)
-private val ScreenBgColor = Color(0xFFF8FAFC)
+private val ScreenBgColor = Color(0xFFF4F6F9)
 private val WarningBannerBg = Color(0xFFFFF0E6)
 private val WarningBannerText = Color(0xFF9A3412)
 

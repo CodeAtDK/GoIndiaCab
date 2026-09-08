@@ -21,6 +21,7 @@ import androidx.compose.ui.unit.sp
 import com.example.goindiacab.components.AdaptiveContainer
 import com.example.goindiacab.components.PlatformBackHandler
 import com.example.goindiacab.theme.BrandOrange
+import com.example.goindiacab.theme.SurfaceGray
 import com.example.goindiacab.theme.TextDark
 import com.example.goindiacab.theme.dmSansFontFamily
 import com.example.goindiacab.theme.outfitFontFamily
@@ -45,7 +46,7 @@ fun DateSelectionScreen(
 
     AdaptiveContainer {
         Scaffold(
-            containerColor = Color(0xFFF8FAFC),
+            containerColor = SurfaceGray,
             topBar = {
                 OutstationTopBar(
                     title = "Select Travel Date",

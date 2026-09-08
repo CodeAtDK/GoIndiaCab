@@ -23,6 +23,7 @@ import com.example.goindiacab.di.AppContainer
 import com.example.goindiacab.theme.BrandBlue
 import com.example.goindiacab.theme.BrandOrange
 import com.example.goindiacab.theme.MarkerOrange
+import com.example.goindiacab.theme.SurfaceGray
 import com.example.goindiacab.theme.TextDark
 import com.example.goindiacab.theme.TextMuted
 import com.example.goindiacab.theme.dmSansFontFamily
@@ -60,7 +61,7 @@ fun ScheduleRideScreen(
 
     AdaptiveContainer {
         Scaffold(
-            containerColor = Color(0xFFF8FAFC),
+            containerColor = SurfaceGray,
             topBar = {
                 OutstationTopBar(
                     title = "Schedule a Ride",

@@ -41,6 +41,7 @@ import com.example.goindiacab.components.PlatformMapView
 import com.example.goindiacab.data.models.LocationItem
 import com.example.goindiacab.di.AppContainer
 import com.example.goindiacab.theme.BrandBlue
+import com.example.goindiacab.theme.SurfaceGray
 import com.example.goindiacab.theme.TextDark
 import com.example.goindiacab.theme.TextMuted
 import com.example.goindiacab.theme.dmSansFontFamily
@@ -85,7 +86,7 @@ fun ConfirmPickupLocationMapScreen(
         Box(
             modifier = Modifier
                 .fillMaxSize()
-                .background(Color(0xFFF3F4F6))
+                .background(SurfaceGray)
         ) {
             // 1. Fullscreen Live Google Map Viewport with GPS and Coordinates
             PlatformMapView(
@@ -158,9 +159,10 @@ fun ConfirmPickupLocationMapScreen(
                 Surface(
                     onClick = { viewModel.recenterToGps() },
                     shape = RoundedCornerShape(12.dp),
-                    color = Color.White,
-                    shadowElevation = 6.dp,
-                    modifier = Modifier.size(46.dp)
+                    color = SurfaceGray,
+                    border = BorderStroke(1.dp, Color(0xFFE5E7EB)),
+                    shadowElevation = 2.dp,
+                    modifier = Modifier.size(42.dp)
                 ) {
                     Box(contentAlignment = Alignment.Center) {
                         Icon(
