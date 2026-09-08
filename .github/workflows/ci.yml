@@ -2,9 +2,9 @@ name: GoIndiaCab CI Pipeline
 
 on:
   push:
-    branches: [ main, develop ]
+    branches: [ main, deploy, develop, testing, 'feature/**' ]
   pull_request:
-    branches: [ main, develop ]
+    branches: [ main, deploy, develop, testing ]
   workflow_dispatch:
 
 permissions:
