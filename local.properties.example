@@ -1,0 +1,16 @@
+## GoIndiaCab - Local Environment Configuration Template
+##
+## Instructions:
+## 1. Do NOT commit your actual `local.properties` file (it is already in .gitignore).
+## 2. Copy or add the variables below into your personal `local.properties` file at the repository root.
+## 3. Replace the placeholder values with your development/testing keys.
+
+# Location of your local Android SDK (automatically populated by Android Studio)
+# sdk.dir=/Users/<username>/Library/Android/sdk
+
+# Google Maps & Places API Key
+# Used for live Google Places Autocomplete, Geocoding, and Map display.
+# Keep this private. Always restrict this key in Google Cloud Console by:
+# - Android application package (com.example.goindiacab) & SHA-1 fingerprint.
+# - API restrictions: Places API, Geocoding API, Maps SDK for Android.
+MAPS_API_KEY=YOUR_GOOGLE_MAPS_API_KEY_HERE

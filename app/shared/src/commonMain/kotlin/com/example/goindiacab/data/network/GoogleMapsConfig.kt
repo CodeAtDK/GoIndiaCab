@@ -14,10 +14,12 @@ package com.example.goindiacab.data.network
  * built-in catalog of 80+ Indian cities, airports, and landmarks.
  */
 object GoogleMapsConfig {
-    // Paste your Google Cloud Maps API key here
-    var API_KEY: String = "AIzaSyDYLWkpdUw4M4-aJr5DqYibO2BP1_VR2s4"
+    // Overridden at runtime by MainActivity from local.properties / manifest placeholder,
+    // or set manually for testing. Never hardcode live secrets here.
+    var API_KEY: String = ""
 
     const val PLACES_AUTOCOMPLETE_URL = "https://maps.googleapis.com/maps/api/place/autocomplete/json"
     const val PLACE_DETAILS_URL = "https://maps.googleapis.com/maps/api/place/details/json"
     const val GEOCODE_URL = "https://maps.googleapis.com/maps/api/geocode/json"
 }
+
