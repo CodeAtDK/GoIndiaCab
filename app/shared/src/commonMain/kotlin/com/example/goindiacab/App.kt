@@ -73,7 +73,9 @@ enum class AppScreen(val displayName: String) {
     PAYMENT_OTP_VERIFICATION("Trip Start Payment (40%)"),
     PROFILE("Profile"),
     EDIT_PROFILE("Edit Profile"),
-    CUSTOMER_SUPPORT("Help & Support")
+    CUSTOMER_SUPPORT("Help & Support"),
+    RATE_US("Rate Us"),
+    REFER_EARN("Refer & Earn")
 }
 
 @Composable
@@ -354,7 +356,9 @@ fun App() {
                 AppScreen.EDIT_PROFILE -> {
                     popBackTo(AppScreen.PROFILE)
                 }
-                AppScreen.CUSTOMER_SUPPORT -> {
+                AppScreen.CUSTOMER_SUPPORT,
+                AppScreen.RATE_US,
+                AppScreen.REFER_EARN -> {
                     popBackStack()
                 }
             }
@@ -539,7 +543,9 @@ fun App() {
                                 navigateTo(AppScreen.ROUTE_CONFIRMATION)
                             },
                             onProfileClick = { navigateTo(AppScreen.PROFILE) },
-                            onCustomerSupportClick = { navigateTo(AppScreen.CUSTOMER_SUPPORT) }
+                            onCustomerSupportClick = { navigateTo(AppScreen.CUSTOMER_SUPPORT) },
+                            onRateUsClick = { navigateTo(AppScreen.RATE_US) },
+                            onReferEarnClick = { navigateTo(AppScreen.REFER_EARN) }
                         )
                     }
                     // -------------------------------------------------------------
@@ -875,7 +881,7 @@ fun App() {
                             onMyBookingsClick = { navigateTo(AppScreen.HOME) },
                             onLocationClick = { navigateTo(AppScreen.PICKUP_LOCATION_SELECTION) },
                             onOffersCouponsClick = { navigateTo(AppScreen.APPLY_COUPON) },
-                            onReferEarnClick = { toast("Refer & Earn: Invite friends and earn ₹500") },
+                            onReferEarnClick = { navigateTo(AppScreen.REFER_EARN) },
                             onSettingsClick = { toast("Settings coming soon") },
                             onHelpSupportClick = { navigateTo(AppScreen.CUSTOMER_SUPPORT) },
                             onLogoutClick = { navigateTo(AppScreen.LOGIN, clearStack = true) },
@@ -900,6 +906,27 @@ fun App() {
                             onEmailSupportClick = { toast("Opening email to support@goindiacab.com") },
                             onSosClick = { toast("Connecting to Emergency Helpline 112...") },
                             onCategoryClick = { category -> toast("Opened: $category") }
+                        )
+                    }
+                    AppScreen.RATE_US -> {
+                        RateUsScreen(
+                            onBackClick = { handleScreenBack() },
+                            onRatePlayStoreClick = { stars ->
+                                toast("Opening Play Store to rate $stars stars...")
+                                popBackStack()
+                            },
+                            onMaybeLaterClick = { popBackStack() }
+                        )
+                    }
+                    AppScreen.REFER_EARN -> {
+                        ReferEarnScreen(
+                            onBackClick = { handleScreenBack() },
+                            onWhatsAppShareClick = { msg ->
+                                toast("Sharing referral link via WhatsApp...")
+                            },
+                            onSmsShareClick = { msg ->
+                                toast("Opening SMS to invite friend...")
+                            }
                         )
                     }
                 }

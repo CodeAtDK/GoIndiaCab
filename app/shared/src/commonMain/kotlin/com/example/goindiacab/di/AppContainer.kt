@@ -132,4 +132,18 @@ object AppContainer {
     fun createBookingFlowViewModel(): com.example.goindiacab.viewmodel.BookingFlowViewModel {
         return com.example.goindiacab.viewmodel.BookingFlowViewModel(bookingRepository = bookingRepository)
     }
+
+    /**
+     * Factory for RateUsViewModel.
+     */
+    fun createRateUsViewModel(): com.example.goindiacab.viewmodel.RateUsViewModel {
+        return com.example.goindiacab.viewmodel.RateUsViewModel()
+    }
+
+    /**
+     * Factory for ReferEarnViewModel.
+     */
+    fun createReferEarnViewModel(): com.example.goindiacab.viewmodel.ReferEarnViewModel {
+        return com.example.goindiacab.viewmodel.ReferEarnViewModel()
+    }
 }
