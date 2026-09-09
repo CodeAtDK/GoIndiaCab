@@ -181,5 +181,12 @@ object AppContainer {
     fun createNotificationsViewModel(): com.example.goindiacab.viewmodel.NotificationsViewModel {
         return com.example.goindiacab.viewmodel.NotificationsViewModel()
     }
+
+    /**
+     * Factory for PaymentReminderViewModel.
+     */
+    fun createPaymentReminderViewModel(): com.example.goindiacab.viewmodel.PaymentReminderViewModel {
+        return com.example.goindiacab.viewmodel.PaymentReminderViewModel()
+    }
 }
 

@@ -81,7 +81,8 @@ enum class AppScreen(val displayName: String) {
     ABOUT("About GoIndiaCab"),
     PRIVACY_POLICY("Privacy Policy"),
     MY_REVIEWS("My Reviews"),
-    NOTIFICATIONS("Notifications")
+    NOTIFICATIONS("Notifications"),
+    PAYMENT_REMINDER("Payment Reminder")
 }
 
 @Composable
@@ -370,7 +371,8 @@ fun App() {
                 AppScreen.ABOUT,
                 AppScreen.PRIVACY_POLICY,
                 AppScreen.MY_REVIEWS,
-                AppScreen.NOTIFICATIONS -> {
+                AppScreen.NOTIFICATIONS,
+                AppScreen.PAYMENT_REMINDER -> {
                     popBackStack()
                 }
             }
@@ -990,6 +992,19 @@ fun App() {
                             onNotificationClick = { notification ->
                                 toast(notification.title)
                             }
+                        )
+                    }
+                    AppScreen.PAYMENT_REMINDER -> {
+                        PaymentReminderScreen(
+                            viewModel = com.example.goindiacab.di.AppContainer.createPaymentReminderViewModel(),
+                            onPayNowClick = {
+                                navigateTo(AppScreen.PAYMENT_SCREEN)
+                            },
+                            onRemindLaterClick = {
+                                toast("Payment reminder snoozed for 5 minutes")
+                                handleScreenBack()
+                            },
+                            onBackClick = { handleScreenBack() }
                         )
                     }
                 }
