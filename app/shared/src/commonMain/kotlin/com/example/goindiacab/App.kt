@@ -90,6 +90,8 @@ enum class AppScreen(val displayName: String) {
     NOTIFICATIONS("Notifications"),
     PAYMENT_REMINDER("Payment Reminder"),
     MY_TRIPS("My Trips"),
+    TRIP_DETAILS("Trip Details"),
+    PAY_REMAINING_PAYMENT("Pay Remaining Payment"),
     ADD_NEW_ADDRESS("Add New Address"),
     ONGOING_TRIP("Ongoing Round Trip"),
     ADD_STOP("Add Stop"),
@@ -115,6 +117,7 @@ fun App() {
         var showScreenPicker by remember { mutableStateOf(false) }
         var selectedLocationItem by remember { mutableStateOf<com.example.goindiacab.data.models.LocationItem?>(null) }
         var selectedAddressMapLocation by remember { mutableStateOf<com.example.goindiacab.data.models.LocationItem?>(null) }
+        var selectedTripItem by remember { mutableStateOf<com.example.goindiacab.screens.MyTripItem?>(null) }
         var isAddingStop by remember { mutableStateOf(false) }
 
         var offsetX by remember { mutableStateOf(0f) }
@@ -403,6 +406,20 @@ fun App() {
                 AppScreen.ADD_NEW_ADDRESS -> {
                     if (screenBackStack.contains(AppScreen.SAVED_PLACES)) {
                         popBackTo(AppScreen.SAVED_PLACES)
+                    } else {
+                        popBackStack()
+                    }
+                }
+                AppScreen.TRIP_DETAILS -> {
+                    if (screenBackStack.contains(AppScreen.MY_TRIPS)) {
+                        popBackTo(AppScreen.MY_TRIPS)
+                    } else {
+                        popBackStack()
+                    }
+                }
+                AppScreen.PAY_REMAINING_PAYMENT -> {
+                    if (screenBackStack.contains(AppScreen.TRIP_DETAILS)) {
+                        popBackTo(AppScreen.TRIP_DETAILS)
                     } else {
                         popBackStack()
                     }
@@ -1072,15 +1089,49 @@ fun App() {
                         MyTripsScreen(
                             onBackClick = { handleScreenBack() },
                             onTripClick = { trip ->
-                                toast("Trip ${trip.id}: ${trip.origin} ➔ ${trip.destination}")
+                                selectedTripItem = trip
+                                navigateTo(AppScreen.TRIP_DETAILS)
                             },
                             onOngoingTripClick = { trip ->
+                                selectedTripItem = trip
                                 navigateTo(AppScreen.ONGOING_TRIP)
                             },
                             onHomeClick = { popBackTo(AppScreen.HOME) },
                             onOffersClick = { /* offers */ },
                             onProfileClick = { navigateTo(AppScreen.PROFILE) }
                         )
+                    }
+                    AppScreen.TRIP_DETAILS -> {
+                        selectedTripItem?.let { trip ->
+                            TripDetailsScreen(
+                                trip = trip,
+                                onBackClick = { handleScreenBack() },
+                                onPayRemainingClick = { tripToPay ->
+                                    selectedTripItem = tripToPay
+                                    navigateTo(AppScreen.PAY_REMAINING_PAYMENT)
+                                },
+                                onTrackLiveClick = { navigateTo(AppScreen.ONGOING_TRIP) },
+                                onContactDriverClick = { toast("Calling driver Rajesh Kumar (+91 98765 43210)") },
+                                onRateTripClick = { navigateTo(AppScreen.RATE_US) },
+                                onBookAgainClick = { navigateTo(AppScreen.CITY_ROUTE_SELECTION) }
+                            )
+                        } ?: run {
+                            LaunchedEffect(Unit) { popBackTo(AppScreen.MY_TRIPS) }
+                        }
+                    }
+                    AppScreen.PAY_REMAINING_PAYMENT -> {
+                        selectedTripItem?.let { trip ->
+                            PayRemainingPaymentScreen(
+                                trip = trip,
+                                onBackClick = { handleScreenBack() },
+                                onPaymentSuccess = {
+                                    toast("✓ Payment Successful! Milestone updated.")
+                                    navigateTo(AppScreen.PAYMENT_OTP_VERIFICATION)
+                                }
+                            )
+                        } ?: run {
+                            LaunchedEffect(Unit) { popBackTo(AppScreen.MY_TRIPS) }
+                        }
                     }
                     AppScreen.ONGOING_TRIP -> {
                         OngoingTripScreen(
