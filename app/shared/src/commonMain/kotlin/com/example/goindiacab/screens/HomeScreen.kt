@@ -287,10 +287,10 @@ fun HomeScreen(
                         )
                     }
                     HomeBottomTab.PROFILE -> {
-                        HomeProfileView(
-                            onLogoutClick = onLogoutClick,
-                            onSavedPlacesClick = onSavedPlacesClick
-                        )
+                        LaunchedEffect(Unit) {
+                            onProfileClick()
+                            activeTab = HomeBottomTab.HOME
+                        }
                     }
                 }
 
@@ -346,6 +346,8 @@ fun HomeScreen(
                 onTabSelected = { tab ->
                     if (tab == HomeBottomTab.MY_TRIPS) {
                         onMyTripsClick()
+                    } else if (tab == HomeBottomTab.PROFILE) {
+                        onProfileClick()
                     } else {
                         activeTab = tab
                     }

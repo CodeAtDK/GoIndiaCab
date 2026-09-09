@@ -42,6 +42,7 @@ import kotlinx.coroutines.launch
 import com.example.goindiacab.components.PlatformBackHandler
 import com.example.goindiacab.components.rememberAppExiter
 import com.example.goindiacab.components.rememberPlatformToast
+import com.example.goindiacab.viewmodel.NotificationType
 import com.example.goindiacab.viewmodel.SavedPlaceItem
 
 enum class AppScreen(val displayName: String) {
@@ -76,6 +77,7 @@ enum class AppScreen(val displayName: String) {
     PARTNER_ASSIGNED("Partner Assigned"),
     REFUND_INITIATED("Refund Initiated"),
     TRIP_PAYMENT_SCHEDULE("Trip Payment Schedule"),
+    TRIP_START_PAYMENT("Pay Advance Milestone"),
     PAYMENT_OTP_VERIFICATION("Verify Payment (OTP)"),
     PROFILE("Profile"),
     EDIT_PROFILE("Edit Profile"),
@@ -376,8 +378,21 @@ fun App() {
                 AppScreen.TRIP_PAYMENT_SCHEDULE -> {
                     popBackTo(AppScreen.PARTNER_ASSIGNED)
                 }
+                AppScreen.TRIP_START_PAYMENT -> {
+                    if (screenBackStack.contains(AppScreen.TRIP_PAYMENT_SCHEDULE)) {
+                        popBackTo(AppScreen.TRIP_PAYMENT_SCHEDULE)
+                    } else {
+                        popBackStack()
+                    }
+                }
                 AppScreen.PAYMENT_OTP_VERIFICATION -> {
-                    popBackTo(AppScreen.TRIP_PAYMENT_SCHEDULE)
+                    if (screenBackStack.contains(AppScreen.TRIP_START_PAYMENT)) {
+                        popBackTo(AppScreen.TRIP_START_PAYMENT)
+                    } else if (screenBackStack.contains(AppScreen.TRIP_PAYMENT_SCHEDULE)) {
+                        popBackTo(AppScreen.TRIP_PAYMENT_SCHEDULE)
+                    } else {
+                        popBackStack()
+                    }
                 }
                 AppScreen.BOOKING_ID_CONFIRMATION -> {
                     // Confirmed booking receipts return cleanly to Home root
@@ -962,8 +977,19 @@ fun App() {
                         // 4-stage milestone payment tracking: Advance (10%), Pickup (40%), Mid-Trip (30%), Completion (20%)
                         TripPaymentScheduleScreen(
                             viewModel = bookingFlowViewModel,
-                            onPayMilestoneClick = { _, _ -> navigateTo(AppScreen.PAYMENT_OTP_VERIFICATION) },
+                            onPayMilestoneClick = { _, _ -> navigateTo(AppScreen.TRIP_START_PAYMENT) },
                             onBackClick = { popBackStack() }
+                        )
+                    }
+                    AppScreen.TRIP_START_PAYMENT -> {
+                        // Pay Trip Start (40%) milestone with UPI / Wallet options matching trip-start-payment.svg
+                        TripStartPaymentScreen(
+                            viewModel = bookingFlowViewModel,
+                            onPaymentConfirmed = {
+                                toast("✓ Milestone Payment Initiated!")
+                                navigateTo(AppScreen.PAYMENT_OTP_VERIFICATION)
+                            },
+                            onBackClick = { handleScreenBack() }
                         )
                     }
                     AppScreen.PAYMENT_OTP_VERIFICATION -> {
@@ -999,7 +1025,7 @@ fun App() {
                     AppScreen.PROFILE -> {
                         ProfileScreen(
                             onEditProfileClick = { navigateTo(AppScreen.EDIT_PROFILE) },
-                            onMyBookingsClick = { navigateTo(AppScreen.HOME) },
+                            onMyBookingsClick = { navigateTo(AppScreen.MY_TRIPS) },
                             onLocationClick = { navigateTo(AppScreen.SAVED_PLACES) },
                             onOffersCouponsClick = { navigateTo(AppScreen.APPLY_COUPON) },
                             onReferEarnClick = { navigateTo(AppScreen.REFER_EARN) },
@@ -1008,7 +1034,7 @@ fun App() {
                             onLogoutClick = { navigateTo(AppScreen.LOGIN, clearStack = true) },
                             onHomeTabClick = { navigateTo(AppScreen.HOME, clearStack = true) },
                             onTripsTabClick = { navigateTo(AppScreen.MY_TRIPS) },
-                            onOffersTabClick = { navigateTo(AppScreen.HOME) }
+                            onOffersTabClick = { navigateTo(AppScreen.APPLY_COUPON) }
                         )
                     }
                     AppScreen.EDIT_PROFILE -> {
@@ -1182,6 +1208,10 @@ fun App() {
                                     selectedTripItem = tripToPay
                                     navigateTo(AppScreen.PAY_REMAINING_PAYMENT)
                                 },
+                                onCancelBookingClick = { cancelledTrip ->
+                                    selectedTripItem = cancelledTrip
+                                    navigateTo(AppScreen.REFUND_INITIATED)
+                                },
                                 onTrackLiveClick = { navigateTo(AppScreen.ONGOING_TRIP) },
                                 onContactDriverClick = { toast("Calling driver Rajesh Kumar (+91 98765 43210)") },
                                 onRateTripClick = { navigateTo(AppScreen.RATE_US) },
@@ -1209,7 +1239,15 @@ fun App() {
                         OngoingTripScreen(
                             onBackClick = { handleScreenBack() },
                             onTrackOnMapClick = { toast("Live GPS Tracking enabled") },
-                            onContactDriverClick = { toast("Calling driver Rajesh Kumar (+91 98765 43210)") }
+                            onContactDriverClick = { toast("Calling driver Rajesh Kumar (+91 98765 43210)") },
+                            onPayRemainingClick = { navigateTo(AppScreen.PAY_REMAINING_PAYMENT) },
+                            onViewTripDetailsClick = {
+                                if (screenBackStack.contains(AppScreen.MY_TRIPS)) {
+                                    popBackTo(AppScreen.MY_TRIPS)
+                                } else {
+                                    navigateTo(AppScreen.MY_TRIPS)
+                                }
+                            }
                         )
                     }
                     AppScreen.ABOUT -> {
@@ -1237,7 +1275,20 @@ fun App() {
                             viewModel = com.example.goindiacab.di.AppContainer.createNotificationsViewModel(),
                             onBackClick = { handleScreenBack() },
                             onNotificationClick = { notification ->
-                                toast(notification.title)
+                                when (notification.type) {
+                                    NotificationType.PAYMENT_DUE,
+                                    NotificationType.FINAL_PAYMENT -> navigateTo(AppScreen.PAYMENT_REMINDER)
+                                    NotificationType.RIDE_CONFIRMED -> {
+                                        if (screenBackStack.contains(AppScreen.MY_TRIPS)) {
+                                            popBackTo(AppScreen.MY_TRIPS)
+                                        } else {
+                                            navigateTo(AppScreen.MY_TRIPS)
+                                        }
+                                    }
+                                    NotificationType.PROMO_OFFER -> navigateTo(AppScreen.APPLY_COUPON)
+                                    NotificationType.SAFETY_UPDATE -> navigateTo(AppScreen.HELP_SAFETY)
+                                    NotificationType.RIDE_COMPLETED -> navigateTo(AppScreen.MY_REVIEWS)
+                                }
                             }
                         )
                     }

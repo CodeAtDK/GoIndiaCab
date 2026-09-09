@@ -62,6 +62,8 @@ fun OngoingTripScreen(
     onBackClick: () -> Unit = {},
     onTrackOnMapClick: () -> Unit = {},
     onContactDriverClick: () -> Unit = {},
+    onPayRemainingClick: () -> Unit = {},
+    onViewTripDetailsClick: () -> Unit = {},
     modifier: Modifier = Modifier
 ) {
     PlatformBackHandler(enabled = true) {
@@ -596,6 +598,55 @@ fun OngoingTripScreen(
                             fontFamily = dmSansFontFamily(),
                             color = TextMuted
                         )
+                    }
+
+                    HorizontalDivider(color = Color(0xFFF1F5F9))
+
+                    // Action to pay remaining / next advance stage
+                    Surface(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .clickable { onPayRemainingClick() },
+                        shape = RoundedCornerShape(12.dp),
+                        color = BrandOrange.copy(alpha = 0.08f),
+                        border = androidx.compose.foundation.BorderStroke(1.dp, BrandOrange.copy(alpha = 0.35f))
+                    ) {
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(horizontal = 14.dp, vertical = 12.dp),
+                            horizontalArrangement = Arrangement.SpaceBetween,
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Column {
+                                Text(
+                                    text = "Pay Next Advance Stage",
+                                    fontSize = 13.5.sp,
+                                    fontWeight = FontWeight.Bold,
+                                    fontFamily = outfitFontFamily(),
+                                    color = BrandOrange
+                                )
+                                Text(
+                                    text = "₹8,000 pending • 100% Secure Settlement",
+                                    fontSize = 11.5.sp,
+                                    fontFamily = dmSansFontFamily(),
+                                    color = TextMuted
+                                )
+                            }
+
+                            Row(
+                                verticalAlignment = Alignment.CenterVertically,
+                                horizontalArrangement = Arrangement.spacedBy(4.dp)
+                            ) {
+                                Text(
+                                    text = "Pay Now",
+                                    fontSize = 13.sp,
+                                    fontWeight = FontWeight.Bold,
+                                    color = BrandOrange
+                                )
+                                ChevronRightIcon(size = 14.dp, color = BrandOrange)
+                            }
+                        }
                     }
                 }
             }

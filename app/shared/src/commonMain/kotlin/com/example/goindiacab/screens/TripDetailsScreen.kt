@@ -16,6 +16,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.goindiacab.components.*
 import com.example.goindiacab.theme.BrandOrange
+import com.example.goindiacab.theme.dmSansFontFamily
 import com.example.goindiacab.theme.outfitFontFamily
 import goindiacab.app.shared.generated.resources.*
 import org.jetbrains.compose.resources.painterResource
@@ -36,6 +37,7 @@ fun TripDetailsScreen(
     trip: MyTripItem,
     onBackClick: () -> Unit = {},
     onPayRemainingClick: (MyTripItem) -> Unit = {},
+    onCancelBookingClick: (MyTripItem) -> Unit = {},
     onTrackLiveClick: () -> Unit = {},
     onContactDriverClick: () -> Unit = {},
     onRateTripClick: () -> Unit = {},
@@ -47,6 +49,7 @@ fun TripDetailsScreen(
     }
 
     val toast = rememberPlatformToast()
+    var showCancelDialog by remember { mutableStateOf(false) }
 
     // Calculate dynamic monetary amounts based on the trip's fare
     val totalAmountNumeric = remember(trip) {
@@ -134,26 +137,68 @@ fun TripDetailsScreen(
                 ) {
                     when (trip.status) {
                         MyTripStatus.UPCOMING -> {
-                            Button(
-                                onClick = { onPayRemainingClick(trip) },
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .height(50.dp),
-                                shape = RoundedCornerShape(12.dp),
-                                colors = ButtonDefaults.buttonColors(containerColor = BrandOrange)
+                            Row(
+                                modifier = Modifier.fillMaxWidth(),
+                                horizontalArrangement = Arrangement.spacedBy(10.dp)
                             ) {
-                                Row(
-                                    verticalAlignment = Alignment.CenterVertically,
-                                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                                OutlinedButton(
+                                    onClick = { showCancelDialog = true },
+                                    modifier = Modifier
+                                        .weight(0.9f)
+                                        .height(50.dp),
+                                    shape = RoundedCornerShape(12.dp),
+                                    border = BorderStroke(1.dp, Color(0xFFEF4444)),
+                                    colors = ButtonDefaults.outlinedButtonColors(contentColor = Color(0xFFEF4444))
                                 ) {
                                     Text(
-                                        text = "Pay Remaining Payment (₹$remainingDueAmount)",
-                                        fontSize = 15.sp,
+                                        text = "Cancel",
+                                        fontSize = 14.sp,
                                         fontWeight = FontWeight.Bold,
                                         fontFamily = outfitFontFamily(),
-                                        color = Color.White
+                                        color = Color(0xFFEF4444)
                                     )
-                                    ChevronRightIcon(size = 14.dp, color = Color.White)
+                                }
+
+                                if (remainingDueAmount > 0) {
+                                    Button(
+                                        onClick = { onPayRemainingClick(trip) },
+                                        modifier = Modifier
+                                            .weight(1.6f)
+                                            .height(50.dp),
+                                        shape = RoundedCornerShape(12.dp),
+                                        colors = ButtonDefaults.buttonColors(containerColor = BrandOrange)
+                                    ) {
+                                        Row(
+                                            verticalAlignment = Alignment.CenterVertically,
+                                            horizontalArrangement = Arrangement.spacedBy(6.dp)
+                                        ) {
+                                            Text(
+                                                text = "Pay Due (₹$remainingDueAmount)",
+                                                fontSize = 14.sp,
+                                                fontWeight = FontWeight.Bold,
+                                                fontFamily = outfitFontFamily(),
+                                                color = Color.White
+                                            )
+                                            ChevronRightIcon(size = 14.dp, color = Color.White)
+                                        }
+                                    }
+                                } else {
+                                    Button(
+                                        onClick = { /* already confirmed */ },
+                                        modifier = Modifier
+                                            .weight(1.6f)
+                                            .height(50.dp),
+                                        shape = RoundedCornerShape(12.dp),
+                                        colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF0F172A))
+                                    ) {
+                                        Text(
+                                            text = "✓ Trip Confirmed",
+                                            fontSize = 14.sp,
+                                            fontWeight = FontWeight.Bold,
+                                            fontFamily = outfitFontFamily(),
+                                            color = Color(0xFF10B981)
+                                        )
+                                    }
                                 }
                             }
                         }
@@ -759,5 +804,58 @@ fun TripDetailsScreen(
 
             Spacer(modifier = Modifier.height(20.dp))
         }
+    }
+
+    if (showCancelDialog) {
+        AlertDialog(
+            onDismissRequest = { showCancelDialog = false },
+            title = {
+                Text(
+                    text = "Cancel Booking?",
+                    fontWeight = FontWeight.Bold,
+                    fontFamily = outfitFontFamily(),
+                    color = Color(0xFF0F172A)
+                )
+            },
+            text = {
+                Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                    Text(
+                        text = "Are you sure you want to cancel booking ${trip.id}?",
+                        fontSize = 14.sp,
+                        fontFamily = dmSansFontFamily(),
+                        color = Color(0xFF334155)
+                    )
+                    Surface(
+                        shape = RoundedCornerShape(8.dp),
+                        color = Color(0xFFECFDF5),
+                        border = BorderStroke(1.dp, Color(0xFFA7F3D0))
+                    ) {
+                        Text(
+                            text = "✓ 100% Full Refund: As per GoIndiaCab policy, cancellations up to 24 hours prior to pickup receive a complete refund to the original payment source.",
+                            fontSize = 12.sp,
+                            fontFamily = dmSansFontFamily(),
+                            color = Color(0xFF047857),
+                            modifier = Modifier.padding(10.dp)
+                        )
+                    }
+                }
+            },
+            confirmButton = {
+                Button(
+                    onClick = {
+                        showCancelDialog = false
+                        onCancelBookingClick(trip)
+                    },
+                    colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFEF4444))
+                ) {
+                    Text("Yes, Cancel Ride", color = Color.White, fontWeight = FontWeight.Bold)
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { showCancelDialog = false }) {
+                    Text("Keep Booking", color = Color(0xFF64748B))
+                }
+            }
+        )
     }
 }
