@@ -949,8 +949,7 @@ fun App() {
                             viewModel = bookingFlowViewModel,
                             onBackToHomeClick = { navigateTo(AppScreen.HOME, clearStack = true) },
                             onTrackRideClick = {
-                                navigateTo(AppScreen.HOME, clearStack = true)
-                                toast("Ride tracking active: Driver Rajesh Kumar is 4 mins away")
+                                navigateTo(AppScreen.ONGOING_TRIP)
                             }
                         )
                     }

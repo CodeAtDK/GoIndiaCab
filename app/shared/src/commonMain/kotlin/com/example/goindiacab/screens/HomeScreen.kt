@@ -79,6 +79,7 @@ fun HomeScreen(
     val uiState by viewModel.uiState.collectAsState()
     var activeTab by remember { mutableStateOf(HomeBottomTab.HOME) }
     var isDrawerOpen by remember { mutableStateOf(false) }
+    var isOngoingTripDismissed by remember { mutableStateOf(false) }
     val snackbarHostState = remember { SnackbarHostState() }
 
     // Intercept back button when side drawer is open
@@ -326,6 +327,16 @@ fun HomeScreen(
                 SnackbarHost(
                     hostState = snackbarHostState,
                     modifier = Modifier.align(Alignment.BottomCenter)
+                )
+            }
+
+            // Ongoing Trip Bottom Pop-Up (Interactive card docked above bottom nav)
+            if (activeTab == HomeBottomTab.HOME) {
+                OngoingTripBottomPopup(
+                    isDismissed = isOngoingTripDismissed,
+                    onCardClick = onOngoingTripClick,
+                    onDismiss = { isOngoingTripDismissed = true },
+                    onReopen = { isOngoingTripDismissed = false }
                 )
             }
 
