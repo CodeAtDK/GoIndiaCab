@@ -1,6 +1,7 @@
 package com.example.goindiacab.screens
 
 import androidx.compose.animation.*
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -52,7 +53,12 @@ fun CustomerSupportScreen(
     onCallSupportClick: () -> Unit = {},
     onEmailSupportClick: () -> Unit = {},
     onSosClick: () -> Unit = {},
-    onCategoryClick: (String) -> Unit = {}
+    onCategoryClick: (String) -> Unit = {},
+    onSafetyClick: () -> Unit = {},
+    onTripIssuesClick: () -> Unit = {},
+    onPaymentsClick: () -> Unit = {},
+    onRaiseTicketClick: (String) -> Unit = {},
+    onTicketHistoryClick: () -> Unit = {}
 ) {
     var searchQuery by remember { mutableStateOf("") }
     var expandedFaqId by remember { mutableStateOf<String?>("faq_1") }
@@ -396,7 +402,10 @@ fun CustomerSupportScreen(
                                 modifier = Modifier.size(22.dp)
                             )
                         },
-                        onClick = { onCategoryClick("Safety Issue") }
+                        onClick = {
+                            onCategoryClick("Safety Issue")
+                            onSafetyClick()
+                        }
                     )
 
                     SupportCategoryCard(
@@ -410,7 +419,10 @@ fun CustomerSupportScreen(
                                 modifier = Modifier.size(22.dp)
                             )
                         },
-                        onClick = { onCategoryClick("Trip Issues") }
+                        onClick = {
+                            onCategoryClick("Trip Issues")
+                            onTripIssuesClick()
+                        }
                     )
                 }
 
@@ -429,7 +441,10 @@ fun CustomerSupportScreen(
                                 modifier = Modifier.size(22.dp)
                             )
                         },
-                        onClick = { onCategoryClick("Payments") }
+                        onClick = {
+                            onCategoryClick("Payments")
+                            onPaymentsClick()
+                        }
                     )
 
                     SupportCategoryCard(
@@ -438,8 +453,87 @@ fun CustomerSupportScreen(
                         icon = {
                             ThumbUpIcon(size = 20.dp, color = SupportCategoryIconTint)
                         },
-                        onClick = { onCategoryClick("App Feedback") }
+                        onClick = {
+                            onCategoryClick("App Feedback")
+                            onRaiseTicketClick("App Feedback")
+                        }
                     )
+                }
+            }
+
+            // Support Tickets Quick Actions
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(10.dp)
+            ) {
+                Surface(
+                    modifier = Modifier
+                        .weight(1f)
+                        .clickable { onRaiseTicketClick("General Query") },
+                    shape = RoundedCornerShape(14.dp),
+                    color = Color.White,
+                    border = BorderStroke(1.dp, SupportOrange.copy(alpha = 0.4f)),
+                    shadowElevation = 1.dp
+                ) {
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 12.dp, vertical = 12.dp),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(8.dp)
+                    ) {
+                        Text("✍️", fontSize = 18.sp)
+                        Column {
+                            Text(
+                                text = "Raise a Ticket",
+                                fontSize = 13.sp,
+                                fontWeight = FontWeight.Bold,
+                                fontFamily = outfitFontFamily(),
+                                color = SupportOrange
+                            )
+                            Text(
+                                text = "15-min response",
+                                fontSize = 11.sp,
+                                fontFamily = dmSansFontFamily(),
+                                color = SupportTextSub
+                            )
+                        }
+                    }
+                }
+
+                Surface(
+                    modifier = Modifier
+                        .weight(1f)
+                        .clickable { onTicketHistoryClick() },
+                    shape = RoundedCornerShape(14.dp),
+                    color = Color.White,
+                    border = BorderStroke(1.dp, SupportBorder),
+                    shadowElevation = 1.dp
+                ) {
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 12.dp, vertical = 12.dp),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(8.dp)
+                    ) {
+                        Text("📋", fontSize = 18.sp)
+                        Column {
+                            Text(
+                                text = "My Tickets",
+                                fontSize = 13.sp,
+                                fontWeight = FontWeight.Bold,
+                                fontFamily = outfitFontFamily(),
+                                color = SupportTextDark
+                            )
+                            Text(
+                                text = "Check status (3)",
+                                fontSize = 11.sp,
+                                fontFamily = dmSansFontFamily(),
+                                color = SupportTextSub
+                            )
+                        }
+                    }
                 }
             }
 

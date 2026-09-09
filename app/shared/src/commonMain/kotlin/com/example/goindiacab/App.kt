@@ -95,7 +95,12 @@ enum class AppScreen(val displayName: String) {
     ADD_NEW_ADDRESS("Add New Address"),
     ONGOING_TRIP("Ongoing Round Trip"),
     ADD_STOP("Add Stop"),
-    CONFIRM_ADDRESS_MAP("Confirm Address on Map")
+    CONFIRM_ADDRESS_MAP("Confirm Address on Map"),
+    HELP_SAFETY("Safety & Security Help"),
+    HELP_TRIP_ISSUES("Trip Issues & Lost Items"),
+    HELP_PAYMENTS("Payments & Refunds Help"),
+    HELP_RAISE_TICKET("Raise Support Ticket"),
+    HELP_TICKET_HISTORY("Support Tickets")
 }
 
 @Composable
@@ -118,6 +123,7 @@ fun App() {
         var selectedLocationItem by remember { mutableStateOf<com.example.goindiacab.data.models.LocationItem?>(null) }
         var selectedAddressMapLocation by remember { mutableStateOf<com.example.goindiacab.data.models.LocationItem?>(null) }
         var selectedTripItem by remember { mutableStateOf<com.example.goindiacab.screens.MyTripItem?>(null) }
+        var initialSupportCategory by remember { mutableStateOf("Trip Experience") }
         var isAddingStop by remember { mutableStateOf(false) }
 
         var offsetX by remember { mutableStateOf(0f) }
@@ -420,6 +426,17 @@ fun App() {
                 AppScreen.PAY_REMAINING_PAYMENT -> {
                     if (screenBackStack.contains(AppScreen.TRIP_DETAILS)) {
                         popBackTo(AppScreen.TRIP_DETAILS)
+                    } else {
+                        popBackStack()
+                    }
+                }
+                AppScreen.HELP_SAFETY,
+                AppScreen.HELP_TRIP_ISSUES,
+                AppScreen.HELP_PAYMENTS,
+                AppScreen.HELP_RAISE_TICKET,
+                AppScreen.HELP_TICKET_HISTORY -> {
+                    if (screenBackStack.contains(AppScreen.CUSTOMER_SUPPORT)) {
+                        popBackTo(AppScreen.CUSTOMER_SUPPORT)
                     } else {
                         popBackStack()
                     }
@@ -1009,7 +1026,62 @@ fun App() {
                             onCallSupportClick = { toast("Calling GoIndiaCab Support: 1800-123-4567") },
                             onEmailSupportClick = { toast("Opening email to support@goindiacab.com") },
                             onSosClick = { toast("Connecting to Emergency Helpline 112...") },
-                            onCategoryClick = { category -> toast("Opened: $category") }
+                            onCategoryClick = { category -> /* handled */ },
+                            onSafetyClick = { navigateTo(AppScreen.HELP_SAFETY) },
+                            onTripIssuesClick = { navigateTo(AppScreen.HELP_TRIP_ISSUES) },
+                            onPaymentsClick = { navigateTo(AppScreen.HELP_PAYMENTS) },
+                            onRaiseTicketClick = { cat ->
+                                initialSupportCategory = cat
+                                navigateTo(AppScreen.HELP_RAISE_TICKET)
+                            },
+                            onTicketHistoryClick = { navigateTo(AppScreen.HELP_TICKET_HISTORY) }
+                        )
+                    }
+                    AppScreen.HELP_SAFETY -> {
+                        HelpSafetyScreen(
+                            onBackClick = { handleScreenBack() },
+                            onCallSosClick = { toast("Dialing Emergency Helpline 112...") },
+                            onReportIncidentClick = {
+                                initialSupportCategory = "Safety Issue"
+                                navigateTo(AppScreen.HELP_RAISE_TICKET)
+                            }
+                        )
+                    }
+                    AppScreen.HELP_TRIP_ISSUES -> {
+                        HelpTripIssuesScreen(
+                            onBackClick = { handleScreenBack() },
+                            onRaiseTicketClick = { issue ->
+                                initialSupportCategory = "Trip Experience"
+                                navigateTo(AppScreen.HELP_RAISE_TICKET)
+                            }
+                        )
+                    }
+                    AppScreen.HELP_PAYMENTS -> {
+                        HelpPaymentsScreen(
+                            onBackClick = { handleScreenBack() },
+                            onDisputeFareClick = { dispute ->
+                                initialSupportCategory = "Payment & Refund"
+                                navigateTo(AppScreen.HELP_RAISE_TICKET)
+                            },
+                            onDownloadInvoiceClick = { toast("Downloading GST Tax Invoice PDF...") }
+                        )
+                    }
+                    AppScreen.HELP_RAISE_TICKET -> {
+                        HelpRaiseTicketScreen(
+                            initialCategory = initialSupportCategory,
+                            onBackClick = { handleScreenBack() },
+                            onTicketSubmitted = { ticketId ->
+                                navigateTo(AppScreen.HELP_TICKET_HISTORY)
+                            }
+                        )
+                    }
+                    AppScreen.HELP_TICKET_HISTORY -> {
+                        HelpTicketHistoryScreen(
+                            onBackClick = { handleScreenBack() },
+                            onRaiseNewTicketClick = {
+                                initialSupportCategory = "Trip Experience"
+                                navigateTo(AppScreen.HELP_RAISE_TICKET)
+                            }
                         )
                     }
                     AppScreen.RATE_US -> {
