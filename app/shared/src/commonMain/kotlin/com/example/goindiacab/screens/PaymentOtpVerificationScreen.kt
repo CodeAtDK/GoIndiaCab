@@ -24,6 +24,7 @@ import com.example.goindiacab.components.PlatformBackHandler
 import com.example.goindiacab.di.AppContainer
 import com.example.goindiacab.theme.*
 import com.example.goindiacab.viewmodel.BookingFlowViewModel
+import com.example.goindiacab.data.models.MilestoneStatus
 import goindiacab.app.shared.generated.resources.*
 import kotlinx.coroutines.delay
 import org.jetbrains.compose.resources.painterResource
@@ -37,22 +38,9 @@ private val ColorTextSecondary = Color(0xFF6B7280)
 private val ColorCardBorder = Color(0xFFE5E7EB)
 
 /**
- * Milestone stages matching payment-otp-verification.svg, screen-1.svg, and screen-2.svg.
- */
-enum class PaymentOtpStage(
-    val stageTitle: String,
-    val amount: Int,
-    val percentageLabel: String,
-    val progressText: String
-) {
-    TRIP_START("40% – Trip Start Payment", 8000, "40%", "Progress: 1 of 4 payments verified"),
-    MID_TRIP("30% – Mid Trip Payment", 6000, "30%", "Progress: 2 of 4 payments verified"),
-    FINAL_LEG("20% – Final Payment", 4000, "20%", "Progress: 3 of 4 payments verified")
-}
-
-/**
  * Screen 33 / Multi-Stage: Verify Payment & Partner OTP Authentication.
- * Reimplemented from scratch strictly matching payment-otp-verification.svg, screen-1.svg, and screen-2.svg.
+ * Reimplemented strictly matching payment-otp-verification.svg, screen-1.svg, and screen-2.svg.
+ * Shows only the single active advance payment milestone currently due for OTP verification.
  */
 @Composable
 fun PaymentOtpVerificationScreen(
@@ -64,7 +52,16 @@ fun PaymentOtpVerificationScreen(
     val session by viewModel.bookingSession.collectAsState()
     val schedule by viewModel.paymentSchedule.collectAsState()
 
-    var selectedStage by remember { mutableStateOf(PaymentOtpStage.MID_TRIP) }
+    val activeMilestone = schedule.milestones.firstOrNull { it.status == MilestoneStatus.DUE }
+        ?: schedule.milestones.firstOrNull { it.status == MilestoneStatus.UPCOMING }
+        ?: schedule.milestones.firstOrNull()
+
+    val milestoneAmount = activeMilestone?.amount ?: 4800
+    val milestoneTitle = activeMilestone?.title ?: "Trip Start Advance Payment (40%)"
+    val dueIndex = schedule.milestones.indexOfFirst { it.id == activeMilestone?.id }.let { if (it >= 0) it + 1 else 2 }
+    val totalCount = schedule.milestones.size.coerceAtLeast(4)
+    val progressLabel = "Progress: $dueIndex of $totalCount advance payments verified"
+
     var countdownSeconds by remember { mutableStateOf(600) } // 10 minutes
     var isResent by remember { mutableStateOf(false) }
 
@@ -149,7 +146,11 @@ fun PaymentOtpVerificationScreen(
                         verticalArrangement = Arrangement.spacedBy(8.dp)
                     ) {
                         Button(
-                            onClick = onPaymentVerified,
+                            onClick = {
+                                viewModel.verifyOtp("7429") {
+                                    onPaymentVerified()
+                                }
+                            },
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .height(52.dp),
@@ -166,7 +167,7 @@ fun PaymentOtpVerificationScreen(
                         }
 
                         Text(
-                            text = selectedStage.progressText,
+                            text = progressLabel,
                             fontSize = 12.5.sp,
                             fontFamily = dmSansFontFamily(),
                             color = ColorTextSecondary
@@ -183,35 +184,6 @@ fun PaymentOtpVerificationScreen(
                     .padding(16.dp),
                 verticalArrangement = Arrangement.spacedBy(14.dp)
             ) {
-                // Stage Switcher Tabs (Screen variation selector)
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.spacedBy(8.dp)
-                ) {
-                    PaymentOtpStage.values().forEach { stage ->
-                        val isSelected = stage == selectedStage
-                        Surface(
-                            onClick = { selectedStage = stage },
-                            shape = RoundedCornerShape(8.dp),
-                            color = if (isSelected) ColorNavy else Color.White,
-                            border = androidx.compose.foundation.BorderStroke(
-                                1.dp,
-                                if (isSelected) ColorNavy else Color(0xFFCBD5E1)
-                            ),
-                            modifier = Modifier.weight(1f)
-                        ) {
-                            Text(
-                                text = stage.percentageLabel,
-                                fontSize = 12.sp,
-                                fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Medium,
-                                color = if (isSelected) Color.White else ColorTextSecondary,
-                                textAlign = TextAlign.Center,
-                                modifier = Modifier.padding(vertical = 6.dp)
-                            )
-                        }
-                    }
-                }
-
                 // 1. Dark Navy "VERIFYING AMOUNT" Card
                 Surface(
                     modifier = Modifier.fillMaxWidth(),
@@ -236,7 +208,7 @@ fun PaymentOtpVerificationScreen(
                         )
 
                         Text(
-                            text = "₹${selectedStage.amount}",
+                            text = "₹$milestoneAmount",
                             fontSize = 34.sp,
                             fontWeight = FontWeight.ExtraBold,
                             fontFamily = outfitFontFamily(),
@@ -244,11 +216,11 @@ fun PaymentOtpVerificationScreen(
                         )
 
                         Text(
-                            text = selectedStage.stageTitle,
+                            text = milestoneTitle,
                             fontSize = 13.5.sp,
                             fontWeight = FontWeight.SemiBold,
                             fontFamily = dmSansFontFamily(),
-                            color = if (selectedStage == PaymentOtpStage.TRIP_START) Color(0xFF34D399) else Color(0xFFF59E0B)
+                            color = Color(0xFF34D399)
                         )
                     }
                 }
@@ -270,14 +242,14 @@ fun PaymentOtpVerificationScreen(
                     ) {
                         Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
                             Text(
-                                text = "Delhi ➔ Jaipur Multi-Stop",
+                                text = if (session.dropLocation.isNotBlank()) "${session.pickupLocation.ifBlank { "Delhi" }} ➔ ${session.dropLocation} Multi-Stop" else schedule.routeSummary,
                                 fontSize = 15.sp,
                                 fontWeight = FontWeight.Bold,
                                 fontFamily = outfitFontFamily(),
                                 color = ColorTextPrimary
                             )
                             Text(
-                                text = "3 Days • 580 km",
+                                text = schedule.durationAndDistance,
                                 fontSize = 12.5.sp,
                                 fontFamily = dmSansFontFamily(),
                                 color = ColorTextSecondary
@@ -285,7 +257,7 @@ fun PaymentOtpVerificationScreen(
                         }
 
                         Text(
-                            text = "Total: ₹20,000",
+                            text = if (session.fareBreakdown.totalEstimatedFare > 0) "Total: ₹${session.fareBreakdown.totalEstimatedFare}" else "Total: ₹${schedule.totalAmount}",
                             fontSize = 15.sp,
                             fontWeight = FontWeight.Bold,
                             fontFamily = outfitFontFamily(),

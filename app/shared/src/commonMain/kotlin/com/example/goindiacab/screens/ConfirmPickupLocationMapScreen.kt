@@ -70,6 +70,8 @@ import org.jetbrains.compose.resources.painterResource
 @Composable
 fun ConfirmPickupLocationMapScreen(
     initialLocation: LocationItem? = null,
+    screenTitle: String = "PICKUP LOCATION",
+    confirmButtonText: String = "Confirm Pickup Location",
     viewModel: ConfirmPickupViewModel = remember { AppContainer.createConfirmPickupViewModel() },
     onBackClick: () -> Unit,
     onConfirmPickup: (LocationItem) -> Unit
@@ -189,6 +191,8 @@ fun ConfirmPickupLocationMapScreen(
 
             // 5. Bottom Confirmation Sheet Card
             BottomConfirmationCard(
+                screenTitle = screenTitle,
+                confirmButtonText = confirmButtonText,
                 title = uiState.locationTitle,
                 address = uiState.fullAddress,
                 isFavorite = uiState.isFavorite,
@@ -440,6 +444,8 @@ private fun AnimatedCenterPin(
  */
 @Composable
 private fun BottomConfirmationCard(
+    screenTitle: String = "PICKUP LOCATION",
+    confirmButtonText: String = "Confirm Pickup Location",
     title: String,
     address: String,
     isFavorite: Boolean,
@@ -472,7 +478,7 @@ private fun BottomConfirmationCard(
 
             Spacer(modifier = Modifier.height(14.dp))
 
-            // Subtitle Tag: "PICKUP LOCATION" with green indicator
+            // Subtitle Tag with indicator
             Row(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.spacedBy(6.dp)
@@ -484,7 +490,7 @@ private fun BottomConfirmationCard(
                         .background(Color(0xFF10B981))
                 )
                 Text(
-                    text = "PICKUP LOCATION",
+                    text = screenTitle,
                     fontSize = 11.sp,
                     fontWeight = FontWeight.Bold,
                     fontFamily = outfitFontFamily(),
@@ -502,7 +508,7 @@ private fun BottomConfirmationCard(
             ) {
                 Column(modifier = Modifier.weight(1f)) {
                     Text(
-                        text = if (isReverseGeocoding) "Locating..." else title.ifBlank { "Selected Pickup Point" },
+                        text = if (isReverseGeocoding) "Locating..." else title.ifBlank { "Selected Location Point" },
                         fontSize = 19.sp,
                         fontWeight = FontWeight.ExtraBold,
                         fontFamily = outfitFontFamily(),
@@ -512,7 +518,7 @@ private fun BottomConfirmationCard(
                     )
                     Spacer(modifier = Modifier.height(3.dp))
                     Text(
-                        text = address.ifBlank { "Drag map or use crosshair to fine-tune pickup point" },
+                        text = address.ifBlank { "Drag map or use crosshair to fine-tune location" },
                         fontSize = 13.sp,
                         fontFamily = dmSansFontFamily(),
                         color = Color(0xFF6B7280),
@@ -543,7 +549,7 @@ private fun BottomConfirmationCard(
 
             Spacer(modifier = Modifier.height(20.dp))
 
-            // Solid Primary CTA Button: "Confirm Pickup Location"
+            // Solid Primary CTA Button
             Button(
                 onClick = onConfirmClick,
                 modifier = Modifier
@@ -554,7 +560,7 @@ private fun BottomConfirmationCard(
                 elevation = ButtonDefaults.buttonElevation(defaultElevation = 2.dp)
             ) {
                 Text(
-                    text = "Confirm Pickup Location",
+                    text = confirmButtonText,
                     fontSize = 16.sp,
                     fontWeight = FontWeight.Bold,
                     fontFamily = outfitFontFamily(),

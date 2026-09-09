@@ -198,7 +198,7 @@ fun HomeScreen(
                                 title = "Your Recent Trips",
                                 actionText = "View All",
                                 onActionClick = {
-                                    activeTab = HomeBottomTab.MY_TRIPS
+                                    onMyTripsClick()
                                     onViewAllTripsClick()
                                 }
                             )
@@ -272,14 +272,10 @@ fun HomeScreen(
                 }
             }
             HomeBottomTab.MY_TRIPS -> {
-                MyTripsScreen(
-                    onBackClick = { activeTab = HomeBottomTab.HOME },
-                    onTripClick = {},
-                    onOngoingTripClick = { onOngoingTripClick() },
-                    onHomeClick = { activeTab = HomeBottomTab.HOME },
-                    onOffersClick = { activeTab = HomeBottomTab.OFFERS },
-                    onProfileClick = onProfileClick
-                )
+                LaunchedEffect(Unit) {
+                    onMyTripsClick()
+                    activeTab = HomeBottomTab.HOME
+                }
             }
                     HomeBottomTab.OFFERS -> {
                         HomeOffersView(
@@ -336,7 +332,13 @@ fun HomeScreen(
             // 3. Pinned Bottom Navigation Bar
             HomeBottomNavigationBar(
                 activeTab = activeTab,
-                onTabSelected = { activeTab = it }
+                onTabSelected = { tab ->
+                    if (tab == HomeBottomTab.MY_TRIPS) {
+                        onMyTripsClick()
+                    } else {
+                        activeTab = tab
+                    }
+                }
             )
         }
 
@@ -1540,121 +1542,7 @@ private fun HomeOffersView(
     }
 }
 
-@Composable
-private fun HomeWalletView(
-    onAddMoneyClick: () -> Unit
-) {
-    LazyColumn(
-        modifier = Modifier.fillMaxSize(),
-        contentPadding = PaddingValues(16.dp),
-        verticalArrangement = Arrangement.spacedBy(16.dp)
-    ) {
-        item {
-            Text(
-                text = "GoIndiaCab Wallet",
-                fontSize = 22.sp,
-                fontWeight = FontWeight.ExtraBold,
-                fontFamily = outfitFontFamily(),
-                color = TextDark
-            )
-        }
 
-        // Wallet Balance Card
-        item {
-            Surface(
-                modifier = Modifier.fillMaxWidth(),
-                shape = RoundedCornerShape(20.dp),
-                color = Color(0xFF0052CC),
-                shadowElevation = 4.dp
-            ) {
-                Column(modifier = Modifier.padding(20.dp)) {
-                    Text(
-                        text = "TOTAL WALLET BALANCE",
-                        fontSize = 11.sp,
-                        fontWeight = FontWeight.Bold,
-                        color = Color.White.copy(alpha = 0.8f),
-                        letterSpacing = 0.5.sp,
-                        fontFamily = outfitFontFamily()
-                    )
-                    Spacer(modifier = Modifier.height(6.dp))
-                    Text(
-                        text = "₹1,250.00",
-                        fontSize = 30.sp,
-                        fontWeight = FontWeight.ExtraBold,
-                        color = Color.White,
-                        fontFamily = outfitFontFamily()
-                    )
-                    Spacer(modifier = Modifier.height(14.dp))
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.SpaceBetween,
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Text(
-                            text = "Includes ₹350 GoCash Rewards",
-                            fontSize = 12.sp,
-                            color = Color.White.copy(alpha = 0.85f),
-                            fontFamily = dmSansFontFamily()
-                        )
-                        Button(
-                            onClick = onAddMoneyClick,
-                            shape = RoundedCornerShape(10.dp),
-                            colors = ButtonDefaults.buttonColors(containerColor = Color.White),
-                            contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp)
-                        ) {
-                            Text("+ Add Money", fontSize = 12.sp, fontWeight = FontWeight.Bold, color = Color(0xFF0052CC))
-                        }
-                    }
-                }
-            }
-        }
-
-        item {
-            Text(
-                text = "Recent Transactions",
-                fontSize = 16.sp,
-                fontWeight = FontWeight.Bold,
-                fontFamily = outfitFontFamily(),
-                color = TextDark
-            )
-        }
-
-        val txns = listOf(
-            Triple("Advance Deposit Paid (DL → JAI)", "- ₹450", "12 Sep 2026 • UPI"),
-            Triple("Wallet Top-up Added", "+ ₹1,000", "10 Sep 2026 • NetBanking"),
-            Triple("Referral Bonus Credited", "+ ₹500", "05 Sep 2026 • GoCash")
-        )
-
-        items(txns) { (title, amount, date) ->
-            Surface(
-                modifier = Modifier.fillMaxWidth(),
-                shape = RoundedCornerShape(14.dp),
-                color = Color.White,
-                border = BorderStroke(1.dp, BorderGray)
-            ) {
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(14.dp),
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Column {
-                        Text(text = title, fontSize = 14.sp, fontWeight = FontWeight.Bold, color = TextDark)
-                        Spacer(modifier = Modifier.height(2.dp))
-                        Text(text = date, fontSize = 11.sp, color = TextMuted)
-                    }
-                    Text(
-                        text = amount,
-                        fontSize = 15.sp,
-                        fontWeight = FontWeight.ExtraBold,
-                        color = if (amount.startsWith("+")) Color(0xFF10B981) else TextDark
-                    )
-                }
-            }
-        }
-    }
-}
 
 @Composable
 private fun HomeProfileView(

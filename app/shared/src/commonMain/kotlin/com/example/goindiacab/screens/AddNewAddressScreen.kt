@@ -23,6 +23,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.goindiacab.components.*
+import com.example.goindiacab.data.models.LocationItem
 import com.example.goindiacab.viewmodel.SavedPlaceItem
 import com.example.goindiacab.theme.*
 import com.example.goindiacab.viewmodel.SavedPlacesViewModel
@@ -49,6 +50,8 @@ enum class AddressLabelType(val label: String) {
 @Composable
 fun AddNewAddressScreen(
     viewModel: SavedPlacesViewModel = remember { SavedPlacesViewModel() },
+    selectedMapLocation: LocationItem? = null,
+    onPickOnMapClick: () -> Unit = {},
     onBackClick: () -> Unit = {},
     onAddressSaved: (SavedPlaceItem) -> Unit = {},
     modifier: Modifier = Modifier
@@ -62,6 +65,23 @@ fun AddNewAddressScreen(
     var pincode by remember { mutableStateOf("") }
 
     var errorMessage by remember { mutableStateOf<String?>(null) }
+
+    LaunchedEffect(selectedMapLocation) {
+        selectedMapLocation?.let { loc ->
+            if (loc.title.isNotBlank()) {
+                fullAddress = loc.title
+                if (loc.subtitle.isNotBlank()) {
+                    val segments = loc.subtitle.split(",").map { it.trim() }
+                    if (segments.isNotEmpty()) {
+                        city = segments.first()
+                        if (segments.size > 1) {
+                            state = segments[1]
+                        }
+                    }
+                }
+            }
+        }
+    }
 
     PlatformBackHandler(enabled = true) {
         onBackClick()
@@ -170,12 +190,7 @@ fun AddNewAddressScreen(
         ) {
             // 1. "Use Current Location" Orange Outlined Button
             Surface(
-                onClick = {
-                    fullAddress = "Flat 402, Sunshine Heights, Outer Ring Rd"
-                    city = "New Delhi"
-                    state = "Delhi"
-                    pincode = "110085"
-                },
+                onClick = onPickOnMapClick,
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(52.dp),

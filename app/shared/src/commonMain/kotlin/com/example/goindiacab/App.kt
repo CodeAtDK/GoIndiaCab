@@ -91,7 +91,9 @@ enum class AppScreen(val displayName: String) {
     PAYMENT_REMINDER("Payment Reminder"),
     MY_TRIPS("My Trips"),
     ADD_NEW_ADDRESS("Add New Address"),
-    ONGOING_TRIP("Ongoing Round Trip")
+    ONGOING_TRIP("Ongoing Round Trip"),
+    ADD_STOP("Add Stop"),
+    CONFIRM_ADDRESS_MAP("Confirm Address on Map")
 }
 
 @Composable
@@ -112,6 +114,7 @@ fun App() {
         var enteredPhoneNumber by remember { mutableStateOf("+91 98765 43210") }
         var showScreenPicker by remember { mutableStateOf(false) }
         var selectedLocationItem by remember { mutableStateOf<com.example.goindiacab.data.models.LocationItem?>(null) }
+        var selectedAddressMapLocation by remember { mutableStateOf<com.example.goindiacab.data.models.LocationItem?>(null) }
         var isAddingStop by remember { mutableStateOf(false) }
 
         var offsetX by remember { mutableStateOf(0f) }
@@ -388,9 +391,21 @@ fun App() {
                 AppScreen.NOTIFICATIONS,
                 AppScreen.PAYMENT_REMINDER,
                 AppScreen.MY_TRIPS,
-                AppScreen.ADD_NEW_ADDRESS,
                 AppScreen.ONGOING_TRIP -> {
                     popBackStack()
+                }
+                AppScreen.ADD_STOP -> {
+                    popBackTo(AppScreen.ROUTE_CONFIRMATION)
+                }
+                AppScreen.CONFIRM_ADDRESS_MAP -> {
+                    popBackTo(AppScreen.ADD_NEW_ADDRESS)
+                }
+                AppScreen.ADD_NEW_ADDRESS -> {
+                    if (screenBackStack.contains(AppScreen.SAVED_PLACES)) {
+                        popBackTo(AppScreen.SAVED_PLACES)
+                    } else {
+                        popBackStack()
+                    }
                 }
             }
         }
@@ -651,32 +666,23 @@ fun App() {
                         )
                     }
                     AppScreen.SEARCH_DESTINATION -> {
-                        // Search Destination / Add Stop: provides live search, recent lookups, and popular getaways.
+                        // Search Destination: provides live search, recent lookups, and popular getaways.
                         SearchDestinationScreen(
-                            title = if (isAddingStop) "Add Stop" else "Search Destination",
-                            onBackClick = {
-                                isAddingStop = false
-                                handleScreenBack()
-                            },
+                            title = "Search Destination",
+                            onBackClick = { handleScreenBack() },
                             onDestinationSelected = { dest ->
-                                if (isAddingStop) {
-                                    isAddingStop = false
-                                    multiStopRouteViewModel.addStop(dest, "Rajasthan")
-                                    popBackTo(AppScreen.ROUTE_CONFIRMATION)
-                                } else {
-                                    val fromCity = outstationRouteViewModel.uiState.value.fromCity.ifBlank {
-                                        homeViewModel.uiState.value.pickupLocation.ifBlank { "Current Location" }
-                                    }
-                                    homeViewModel.updateDropLocation(dest)
-                                    outstationRouteViewModel.selectCity(dest)
-                                    outstationRouteViewModel.setFromCity(fromCity)
-
-                                    multiStopRouteViewModel.setRoute(fromCity, dest)
-                                    scheduleRideViewModel.setLocations(fromCity, dest)
-                                    bookingFlowViewModel.updateRouteDetails(fromCity, dest)
-                                    vehicleSelectionViewModel.updateRoute(origin = fromCity, destination = dest)
-                                    navigateTo(AppScreen.ROUTE_CONFIRMATION)
+                                val fromCity = outstationRouteViewModel.uiState.value.fromCity.ifBlank {
+                                    homeViewModel.uiState.value.pickupLocation.ifBlank { "Current Location" }
                                 }
+                                homeViewModel.updateDropLocation(dest)
+                                outstationRouteViewModel.selectCity(dest)
+                                outstationRouteViewModel.setFromCity(fromCity)
+
+                                multiStopRouteViewModel.setRoute(fromCity, dest)
+                                scheduleRideViewModel.setLocations(fromCity, dest)
+                                bookingFlowViewModel.updateRouteDetails(fromCity, dest)
+                                vehicleSelectionViewModel.updateRoute(origin = fromCity, destination = dest)
+                                navigateTo(AppScreen.ROUTE_CONFIRMATION)
                             }
                         )
                     }
@@ -686,19 +692,14 @@ fun App() {
                     // -------------------------------------------------------------
                     AppScreen.ROUTE_CONFIRMATION -> {
                         // Plan Your Route screen: timeline waypoint stops, distance/duration metrics,
-                        // and add-stop capabilities without popup dialog.
+                        // and add-stop capabilities navigating to dedicated AddStopScreen.
                         MultiStopRouteConfirmationScreen(
                             viewModel = multiStopRouteViewModel,
-                            onBackClick = {
-                                isAddingStop = false
-                                handleScreenBack()
-                            },
+                            onBackClick = { handleScreenBack() },
                             onAddStopClick = {
-                                isAddingStop = true
-                                navigateTo(AppScreen.SEARCH_DESTINATION)
+                                navigateTo(AppScreen.ADD_STOP)
                             },
                             onChangeDestinationClick = {
-                                isAddingStop = false
                                 if (screenBackStack.contains(AppScreen.SEARCH_DESTINATION)) {
                                     popBackTo(AppScreen.SEARCH_DESTINATION)
                                 } else {
@@ -722,6 +723,23 @@ fun App() {
                                     distanceKm = route.totalDistanceKm
                                 )
                                 navigateTo(AppScreen.SCHEDULE_RIDE)
+                            }
+                        )
+                    }
+                    AppScreen.ADD_STOP -> {
+                        // Dedicated Add Stop screen matching Search Destination theme
+                        AddStopScreen(
+                            onBackClick = { handleScreenBack() },
+                            onStopSelected = { stop ->
+                                multiStopRouteViewModel.addStop(stop, "Transit Waypoint")
+                                val currentStops = bookingFlowViewModel.bookingSession.value.stopLocations + stop
+                                bookingFlowViewModel.updateRouteDetails(
+                                    pickup = bookingFlowViewModel.bookingSession.value.pickupLocation,
+                                    drop = bookingFlowViewModel.bookingSession.value.dropLocation,
+                                    stops = currentStops
+                                )
+                                toast("✓ Added stop: $stop")
+                                popBackTo(AppScreen.ROUTE_CONFIRMATION)
                             }
                         )
                     }
@@ -1019,10 +1037,35 @@ fun App() {
                     AppScreen.ADD_NEW_ADDRESS -> {
                         AddNewAddressScreen(
                             viewModel = savedPlacesViewModel,
-                            onBackClick = { handleScreenBack() },
+                            selectedMapLocation = selectedAddressMapLocation,
+                            onPickOnMapClick = { navigateTo(AppScreen.CONFIRM_ADDRESS_MAP) },
+                            onBackClick = {
+                                if (screenBackStack.contains(AppScreen.SAVED_PLACES)) {
+                                    popBackTo(AppScreen.SAVED_PLACES)
+                                } else {
+                                    handleScreenBack()
+                                }
+                            },
                             onAddressSaved = { place ->
                                 toast("✓ Address saved: ${place.title}")
-                                popBackTo(AppScreen.SAVED_PLACES)
+                                selectedAddressMapLocation = null
+                                if (screenBackStack.contains(AppScreen.SAVED_PLACES)) {
+                                    popBackTo(AppScreen.SAVED_PLACES)
+                                } else {
+                                    navigateTo(AppScreen.SAVED_PLACES)
+                                }
+                            }
+                        )
+                    }
+                    AppScreen.CONFIRM_ADDRESS_MAP -> {
+                        ConfirmPickupLocationMapScreen(
+                            initialLocation = selectedAddressMapLocation,
+                            screenTitle = "SELECT ADDRESS",
+                            confirmButtonText = "Use This Location",
+                            onBackClick = { handleScreenBack() },
+                            onConfirmPickup = { confirmed ->
+                                selectedAddressMapLocation = confirmed
+                                popBackTo(AppScreen.ADD_NEW_ADDRESS)
                             }
                         )
                     }

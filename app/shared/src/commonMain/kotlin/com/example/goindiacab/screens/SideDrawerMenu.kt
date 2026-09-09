@@ -405,20 +405,7 @@ private fun PrimaryNavigationCard(onItemClick: (String) -> Unit) {
                 badgeText = "2",
                 onClick = { onItemClick("Notifications") }
             )
-            DrawerDivider()
 
-            DrawerMenuItem(
-                title = "Wallet",
-                icon = {
-                    Icon(
-                        painter = painterResource(Res.drawable.ic_wallet_card),
-                        contentDescription = null,
-                        tint = DrawerHeaderDark,
-                        modifier = Modifier.size(20.dp)
-                    )
-                },
-                onClick = { onItemClick("Wallet") }
-            )
             DrawerDivider()
 
             DrawerMenuItem(
