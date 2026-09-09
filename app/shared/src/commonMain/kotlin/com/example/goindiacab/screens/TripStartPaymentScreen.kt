@@ -1,4 +1,7 @@
 package com.example.goindiacab.screens
+import androidx.compose.ui.tooling.preview.Preview
+import com.example.goindiacab.theme.GoIndiaCabTheme
+import com.example.goindiacab.di.AppContainer
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -563,5 +566,17 @@ private fun TripUpiOptionRow(
                 }
             }
         }
+    }
+}
+
+@Preview
+@Composable
+fun TripStartPaymentScreenPreview() {
+    GoIndiaCabTheme {
+        TripStartPaymentScreen(
+            viewModel = AppContainer.createBookingFlowViewModel(),
+            onPaymentConfirmed = {},
+            onBackClick = {}
+        )
     }
 }

@@ -1,4 +1,7 @@
 package com.example.goindiacab.screens
+import androidx.compose.ui.tooling.preview.Preview
+import com.example.goindiacab.theme.GoIndiaCabTheme
+import com.example.goindiacab.di.AppContainer
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -403,6 +406,19 @@ fun RefundInitiatedScreen(
                 }
             },
             shape = RoundedCornerShape(16.dp)
+        )
+    }
+}
+
+@Preview
+@Composable
+fun RefundInitiatedScreenPreview() {
+    GoIndiaCabTheme {
+        RefundInitiatedScreen(
+            viewModel = AppContainer.createBookingFlowViewModel(),
+            onTryDifferentDateClick = {},
+            onTryDifferentVehicleClick = {},
+            onBackClick = {}
         )
     }
 }

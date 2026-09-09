@@ -70,7 +70,10 @@ enum class AppScreen(val displayName: String) {
     PARTNER_ASSIGNED("Partner Assigned"),
     REFUND_INITIATED("Refund Initiated"),
     TRIP_PAYMENT_SCHEDULE("Trip Payment Schedule"),
-    PAYMENT_OTP_VERIFICATION("Trip Start Payment (40%)")
+    PAYMENT_OTP_VERIFICATION("Trip Start Payment (40%)"),
+    PROFILE("Profile"),
+    EDIT_PROFILE("Edit Profile"),
+    CUSTOMER_SUPPORT("Help & Support")
 }
 
 @Composable
@@ -345,6 +348,15 @@ fun App() {
                     // Confirmed booking receipts return cleanly to Home root
                     navigateTo(AppScreen.HOME, clearStack = true)
                 }
+                AppScreen.PROFILE -> {
+                    popBackTo(AppScreen.HOME)
+                }
+                AppScreen.EDIT_PROFILE -> {
+                    popBackTo(AppScreen.PROFILE)
+                }
+                AppScreen.CUSTOMER_SUPPORT -> {
+                    popBackStack()
+                }
             }
         }
 
@@ -525,7 +537,9 @@ fun App() {
                                 bookingFlowViewModel.updateRouteDetails(from, to, distanceKm = 230, fare = trip.fareInr)
                                 vehicleSelectionViewModel.updateRoute(origin = from, destination = to, distanceKm = 230)
                                 navigateTo(AppScreen.ROUTE_CONFIRMATION)
-                            }
+                            },
+                            onProfileClick = { navigateTo(AppScreen.PROFILE) },
+                            onCustomerSupportClick = { navigateTo(AppScreen.CUSTOMER_SUPPORT) }
                         )
                     }
                     // -------------------------------------------------------------
@@ -853,6 +867,39 @@ fun App() {
                             onBackClick = { navigateTo(AppScreen.HOME, clearStack = true) },
                             onBackToHomeClick = { navigateTo(AppScreen.HOME, clearStack = true) },
                             onConfirmAndPayClick = { navigateTo(AppScreen.PAYMENT_SCREEN) }
+                        )
+                    }
+                    AppScreen.PROFILE -> {
+                        ProfileScreen(
+                            onEditProfileClick = { navigateTo(AppScreen.EDIT_PROFILE) },
+                            onMyBookingsClick = { navigateTo(AppScreen.HOME) },
+                            onLocationClick = { navigateTo(AppScreen.PICKUP_LOCATION_SELECTION) },
+                            onOffersCouponsClick = { navigateTo(AppScreen.APPLY_COUPON) },
+                            onReferEarnClick = { toast("Refer & Earn: Invite friends and earn ₹500") },
+                            onSettingsClick = { toast("Settings coming soon") },
+                            onHelpSupportClick = { navigateTo(AppScreen.CUSTOMER_SUPPORT) },
+                            onLogoutClick = { navigateTo(AppScreen.LOGIN, clearStack = true) },
+                            onHomeTabClick = { navigateTo(AppScreen.HOME, clearStack = true) },
+                            onTripsTabClick = { navigateTo(AppScreen.HOME) },
+                            onOffersTabClick = { navigateTo(AppScreen.HOME) }
+                        )
+                    }
+                    AppScreen.EDIT_PROFILE -> {
+                        EditProfileScreen(
+                            onBackClick = { handleScreenBack() },
+                            onSaveClick = { _, _, _, _, _ ->
+                                toast("Profile updated successfully")
+                                popBackTo(AppScreen.PROFILE)
+                            }
+                        )
+                    }
+                    AppScreen.CUSTOMER_SUPPORT -> {
+                        CustomerSupportScreen(
+                            onBackClick = { handleScreenBack() },
+                            onCallSupportClick = { toast("Calling GoIndiaCab Support: 1800-123-4567") },
+                            onEmailSupportClick = { toast("Opening email to support@goindiacab.com") },
+                            onSosClick = { toast("Connecting to Emergency Helpline 112...") },
+                            onCategoryClick = { category -> toast("Opened: $category") }
                         )
                     }
                 }

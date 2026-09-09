@@ -1,4 +1,7 @@
 package com.example.goindiacab.screens
+import androidx.compose.ui.tooling.preview.Preview
+import com.example.goindiacab.theme.GoIndiaCabTheme
+import com.example.goindiacab.di.AppContainer
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -461,6 +464,18 @@ private fun InclusionRow(text: String) {
             text = text,
             fontSize = 14.sp,
             color = ColorTextPrimary
+        )
+    }
+}
+
+@Preview
+@Composable
+fun FareDetailsScreenPreview() {
+    GoIndiaCabTheme {
+        FareDetailsScreen(
+            viewModel = AppContainer.createBookingFlowViewModel(),
+            onBackClick = {},
+            onContinueClick = {}
         )
     }
 }

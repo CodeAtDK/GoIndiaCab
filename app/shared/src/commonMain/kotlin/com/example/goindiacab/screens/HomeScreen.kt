@@ -64,7 +64,9 @@ fun HomeScreen(
     onOutstationClick: () -> Unit = {},
     onPopularRouteClick: (com.example.goindiacab.data.models.PopularRoute) -> Unit = {},
     onPromoBannerClick: (com.example.goindiacab.data.models.PromoBanner) -> Unit = {},
-    onBookAgainClick: (com.example.goindiacab.data.models.RecentTrip) -> Unit = {}
+    onBookAgainClick: (com.example.goindiacab.data.models.RecentTrip) -> Unit = {},
+    onProfileClick: () -> Unit = {},
+    onCustomerSupportClick: () -> Unit = {}
 ) {
     val uiState by viewModel.uiState.collectAsState()
     var activeTab by remember { mutableStateOf(HomeBottomTab.HOME) }
@@ -347,7 +349,8 @@ fun HomeScreen(
                 isDrawerOpen = false
                 when (item) {
                     "My Trips" -> activeTab = HomeBottomTab.MY_TRIPS
-                    "Profile" -> activeTab = HomeBottomTab.PROFILE
+                    "Profile" -> onProfileClick()
+                    "Customer Support" -> onCustomerSupportClick()
                     "Saved Places" -> onSelectPickupClick()
                     "Wallet" -> activeTab = HomeBottomTab.WALLET
                     "Refer & Earn", "Notifications" -> activeTab = HomeBottomTab.OFFERS

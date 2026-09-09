@@ -1,4 +1,6 @@
 package com.example.goindiacab.screens
+import androidx.compose.ui.tooling.preview.Preview
+import com.example.goindiacab.theme.GoIndiaCabTheme
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
@@ -157,5 +159,17 @@ fun TimeSelectionScreen(
                 }
             }
         }
+    }
+}
+
+@Preview
+@Composable
+fun TimeSelectionScreenPreview() {
+    GoIndiaCabTheme {
+        TimeSelectionScreen(
+            initialTimeSlot = "06:00 PM",
+            onBackClick = {},
+            onTimeConfirmed = {}
+        )
     }
 }

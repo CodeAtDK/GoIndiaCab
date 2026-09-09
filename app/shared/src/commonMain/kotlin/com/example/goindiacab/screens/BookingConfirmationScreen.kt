@@ -1,4 +1,7 @@
 package com.example.goindiacab.screens
+import androidx.compose.ui.tooling.preview.Preview
+import com.example.goindiacab.theme.GoIndiaCabTheme
+import com.example.goindiacab.di.AppContainer
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -622,6 +625,19 @@ private fun SummaryFareRow(title: String, amount: String) {
             fontSize = 15.sp,
             fontWeight = FontWeight.SemiBold,
             color = ColorTextPrimary
+        )
+    }
+}
+
+@Preview
+@Composable
+fun BookingConfirmationScreenPreview() {
+    GoIndiaCabTheme {
+        BookingConfirmationScreen(
+            viewModel = AppContainer.createBookingFlowViewModel(),
+            onBackClick = {},
+            onBackToHomeClick = {},
+            onConfirmAndPayClick = {}
         )
     }
 }

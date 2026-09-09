@@ -1,4 +1,7 @@
 package com.example.goindiacab.screens
+import androidx.compose.ui.tooling.preview.Preview
+import com.example.goindiacab.theme.GoIndiaCabTheme
+import com.example.goindiacab.di.AppContainer
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -325,5 +328,16 @@ private fun CouponOfferCard(
                 lineHeight = 16.sp
             )
         }
+    }
+}
+
+@Preview
+@Composable
+fun ApplyCouponScreenPreview() {
+    GoIndiaCabTheme {
+        ApplyCouponScreen(
+            viewModel = AppContainer.createBookingFlowViewModel(),
+            onBackClick = {}
+        )
     }
 }

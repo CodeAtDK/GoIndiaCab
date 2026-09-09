@@ -1,4 +1,6 @@
 package com.example.goindiacab.screens
+import androidx.compose.ui.tooling.preview.Preview
+import com.example.goindiacab.theme.GoIndiaCabTheme
 
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.animateDpAsState
@@ -560,5 +562,17 @@ private fun BottomConfirmationCard(
                 )
             }
         }
+    }
+}
+
+@Preview
+@Composable
+fun ConfirmPickupLocationMapScreenPreview() {
+    GoIndiaCabTheme {
+        ConfirmPickupLocationMapScreen(
+            viewModel = AppContainer.createConfirmPickupViewModel(),
+            onBackClick = {},
+            onConfirmPickup = {}
+        )
     }
 }

@@ -1,4 +1,7 @@
 package com.example.goindiacab.screens
+import androidx.compose.ui.tooling.preview.Preview
+import com.example.goindiacab.theme.GoIndiaCabTheme
+import com.example.goindiacab.di.AppContainer
 
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.core.*
@@ -451,6 +454,18 @@ private fun NetworkBadge(name: String) {
             color = Color(0xFFE2E8F0),
             fontSize = 11.sp,
             fontWeight = FontWeight.Bold
+        )
+    }
+}
+
+@Preview
+@Composable
+fun PaymentProcessingScreenPreview() {
+    GoIndiaCabTheme {
+        PaymentProcessingScreen(
+            viewModel = AppContainer.createBookingFlowViewModel(),
+            onPaymentSuccess = {},
+            onPaymentFailed = {}
         )
     }
 }

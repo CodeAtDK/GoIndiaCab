@@ -1,4 +1,6 @@
 package com.example.goindiacab.screens
+import androidx.compose.ui.tooling.preview.Preview
+import com.example.goindiacab.theme.GoIndiaCabTheme
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
@@ -421,5 +423,17 @@ private fun TimelineStopItem(
                 Spacer(modifier = Modifier.height(10.dp))
             }
         }
+    }
+}
+
+@Preview
+@Composable
+fun MultiStopRouteConfirmationScreenPreview() {
+    GoIndiaCabTheme {
+        MultiStopRouteConfirmationScreen(
+            viewModel = AppContainer.createMultiStopRouteViewModel(),
+            onBackClick = {},
+            onContinueClick = {}
+        )
     }
 }

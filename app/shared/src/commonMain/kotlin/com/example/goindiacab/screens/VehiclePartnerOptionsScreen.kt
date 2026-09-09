@@ -1,4 +1,6 @@
 package com.example.goindiacab.screens
+import androidx.compose.ui.tooling.preview.Preview
+import com.example.goindiacab.theme.GoIndiaCabTheme
 
 import androidx.compose.animation.*
 import androidx.compose.animation.core.tween
@@ -950,5 +952,17 @@ private fun VehicleSelectionErrorState(
                 Text("Retry", fontFamily = outfitFontFamily(), fontWeight = FontWeight.SemiBold)
             }
         }
+    }
+}
+
+@Preview
+@Composable
+fun VehiclePartnerOptionsScreenPreview() {
+    GoIndiaCabTheme {
+        VehiclePartnerOptionsScreen(
+            viewModel = AppContainer.createVehicleSelectionViewModel(),
+            onBackClick = {},
+            onVehicleSelected = {}
+        )
     }
 }

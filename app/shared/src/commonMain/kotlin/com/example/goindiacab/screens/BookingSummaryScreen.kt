@@ -1,4 +1,7 @@
 package com.example.goindiacab.screens
+import androidx.compose.ui.tooling.preview.Preview
+import com.example.goindiacab.theme.GoIndiaCabTheme
+import com.example.goindiacab.di.AppContainer
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -634,6 +637,19 @@ private fun ScheduleMilestoneRow(
             fontSize = 14.sp,
             fontWeight = FontWeight.SemiBold,
             color = ColorTextPrimary
+        )
+    }
+}
+
+@Preview
+@Composable
+fun BookingSummaryScreenPreview() {
+    GoIndiaCabTheme {
+        BookingSummaryScreen(
+            viewModel = AppContainer.createBookingFlowViewModel(),
+            onBackClick = {},
+            onApplyCouponClick = {},
+            onProceedToPayClick = {}
         )
     }
 }

@@ -448,3 +448,156 @@ fun HamburgerMenuIcon(
         )
     }
 }
+
+@Composable
+fun EditPencilIcon(
+    modifier: Modifier = Modifier,
+    size: Dp = 18.dp,
+    color: Color = Color(0xFFFF6B00)
+) {
+    Canvas(modifier = modifier.size(size)) {
+        val w = this.size.width
+        val h = this.size.height
+        val stroke = 1.8.dp.toPx()
+        val path = Path().apply {
+            moveTo(w * 0.65f, h * 0.15f)
+            lineTo(w * 0.85f, h * 0.35f)
+            lineTo(w * 0.35f, h * 0.85f)
+            lineTo(w * 0.15f, h * 0.85f)
+            lineTo(w * 0.15f, h * 0.65f)
+            close()
+        }
+        drawPath(path, color = color, style = Stroke(width = stroke, cap = StrokeCap.Round, join = StrokeJoin.Round))
+        drawLine(
+            color = color,
+            start = androidx.compose.ui.geometry.Offset(w * 0.55f, h * 0.25f),
+            end = androidx.compose.ui.geometry.Offset(w * 0.75f, h * 0.45f),
+            strokeWidth = stroke,
+            cap = StrokeCap.Round
+        )
+    }
+}
+
+@Composable
+fun CameraIcon(
+    modifier: Modifier = Modifier,
+    size: Dp = 16.dp,
+    color: Color = Color.White
+) {
+    Canvas(modifier = modifier.size(size)) {
+        val w = this.size.width
+        val h = this.size.height
+        val stroke = 1.8.dp.toPx()
+        // Camera body
+        val body = Path().apply {
+            moveTo(w * 0.15f, h * 0.35f)
+            lineTo(w * 0.32f, h * 0.35f)
+            lineTo(w * 0.40f, h * 0.22f)
+            lineTo(w * 0.60f, h * 0.22f)
+            lineTo(w * 0.68f, h * 0.35f)
+            lineTo(w * 0.85f, h * 0.35f)
+            lineTo(w * 0.85f, h * 0.80f)
+            lineTo(w * 0.15f, h * 0.80f)
+            close()
+        }
+        drawPath(body, color = color, style = Stroke(width = stroke, cap = StrokeCap.Round, join = StrokeJoin.Round))
+        // Lens circle
+        drawCircle(
+            color = color,
+            radius = w * 0.18f,
+            center = androidx.compose.ui.geometry.Offset(w * 0.5f, h * 0.56f),
+            style = Stroke(width = stroke)
+        )
+    }
+}
+
+@Composable
+fun ChevronDownIcon(
+    modifier: Modifier = Modifier,
+    size: Dp = 18.dp,
+    color: Color = Color(0xFF626D7F)
+) {
+    Canvas(modifier = modifier.size(size)) {
+        val w = this.size.width
+        val h = this.size.height
+        val stroke = 2.dp.toPx()
+        val path = Path().apply {
+            moveTo(w * 0.22f, h * 0.35f)
+            lineTo(w * 0.50f, h * 0.65f)
+            lineTo(w * 0.78f, h * 0.35f)
+        }
+        drawPath(path, color = color, style = Stroke(width = stroke, cap = StrokeCap.Round, join = StrokeJoin.Round))
+    }
+}
+
+@Composable
+fun PhoneCallIcon(
+    modifier: Modifier = Modifier,
+    size: Dp = 18.dp,
+    color: Color = Color.White
+) {
+    Canvas(modifier = modifier.size(size)) {
+        val w = this.size.width
+        val h = this.size.height
+        val stroke = 1.8.dp.toPx()
+        val path = Path().apply {
+            moveTo(w * 0.22f, h * 0.35f)
+            cubicTo(w * 0.22f, h * 0.65f, w * 0.35f, h * 0.78f, w * 0.65f, h * 0.78f)
+            lineTo(w * 0.78f, h * 0.65f)
+            lineTo(w * 0.62f, h * 0.50f)
+            lineTo(w * 0.52f, h * 0.56f)
+            cubicTo(w * 0.44f, h * 0.50f, w * 0.40f, h * 0.46f, w * 0.34f, h * 0.38f)
+            lineTo(w * 0.40f, h * 0.28f)
+            lineTo(w * 0.25f, h * 0.15f)
+            close()
+        }
+        drawPath(path, color = color, style = Stroke(width = stroke, cap = StrokeCap.Round, join = StrokeJoin.Round))
+    }
+}
+
+@Composable
+fun PlusIcon(
+    modifier: Modifier = Modifier,
+    size: Dp = 18.dp,
+    color: Color = Color(0xFF1A253C)
+) {
+    Canvas(modifier = modifier.size(size)) {
+        val w = this.size.width
+        val h = this.size.height
+        val stroke = 2.dp.toPx()
+        drawLine(
+            color = color,
+            start = androidx.compose.ui.geometry.Offset(w * 0.2f, h * 0.5f),
+            end = androidx.compose.ui.geometry.Offset(w * 0.8f, h * 0.5f),
+            strokeWidth = stroke,
+            cap = StrokeCap.Round
+        )
+        drawLine(
+            color = color,
+            start = androidx.compose.ui.geometry.Offset(w * 0.5f, h * 0.2f),
+            end = androidx.compose.ui.geometry.Offset(w * 0.5f, h * 0.8f),
+            strokeWidth = stroke,
+            cap = StrokeCap.Round
+        )
+    }
+}
+
+@Composable
+fun MinusIcon(
+    modifier: Modifier = Modifier,
+    size: Dp = 18.dp,
+    color: Color = Color(0xFF1A253C)
+) {
+    Canvas(modifier = modifier.size(size)) {
+        val w = this.size.width
+        val h = this.size.height
+        val stroke = 2.dp.toPx()
+        drawLine(
+            color = color,
+            start = androidx.compose.ui.geometry.Offset(w * 0.2f, h * 0.5f),
+            end = androidx.compose.ui.geometry.Offset(w * 0.8f, h * 0.5f),
+            strokeWidth = stroke,
+            cap = StrokeCap.Round
+        )
+    }
+}

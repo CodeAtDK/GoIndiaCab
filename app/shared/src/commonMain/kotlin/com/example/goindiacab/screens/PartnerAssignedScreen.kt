@@ -1,4 +1,7 @@
 package com.example.goindiacab.screens
+import androidx.compose.ui.tooling.preview.Preview
+import com.example.goindiacab.theme.GoIndiaCabTheme
+import com.example.goindiacab.di.AppContainer
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -425,6 +428,18 @@ fun PartnerAssignedScreen(
                 }
             },
             shape = RoundedCornerShape(16.dp)
+        )
+    }
+}
+
+@Preview
+@Composable
+fun PartnerAssignedScreenPreview() {
+    GoIndiaCabTheme {
+        PartnerAssignedScreen(
+            viewModel = AppContainer.createBookingFlowViewModel(),
+            onViewTripDetailsClick = {},
+            onBackClick = {}
         )
     }
 }

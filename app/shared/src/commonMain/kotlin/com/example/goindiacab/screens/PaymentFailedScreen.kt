@@ -1,4 +1,7 @@
 package com.example.goindiacab.screens
+import androidx.compose.ui.tooling.preview.Preview
+import com.example.goindiacab.theme.GoIndiaCabTheme
+import com.example.goindiacab.di.AppContainer
 
 import androidx.compose.animation.core.*
 import androidx.compose.foundation.background
@@ -445,5 +448,18 @@ private fun DetailRow(
                 )
             }
         }
+    }
+}
+
+@Preview
+@Composable
+fun PaymentFailedScreenPreview() {
+    GoIndiaCabTheme {
+        PaymentFailedScreen(
+            viewModel = AppContainer.createBookingFlowViewModel(),
+            onRetryPayment = {},
+            onChangePaymentMethod = {},
+            onBackClick = {}
+        )
     }
 }

@@ -1,4 +1,7 @@
 package com.example.goindiacab.screens
+import androidx.compose.ui.tooling.preview.Preview
+import com.example.goindiacab.theme.GoIndiaCabTheme
+import com.example.goindiacab.di.AppContainer
 
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
@@ -687,6 +690,18 @@ private fun PerforatedTicketDivider(modifier: Modifier = Modifier) {
             end = Offset(size.width, 0f),
             strokeWidth = 1.dp.toPx(),
             pathEffect = pathEffect
+        )
+    }
+}
+
+@Preview
+@Composable
+fun BookingIdConfirmationScreenPreview() {
+    GoIndiaCabTheme {
+        BookingIdConfirmationScreen(
+            viewModel = AppContainer.createBookingFlowViewModel(),
+            onBackToHomeClick = {},
+            onTrackRideClick = {}
         )
     }
 }

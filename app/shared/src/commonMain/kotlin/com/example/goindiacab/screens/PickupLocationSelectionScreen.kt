@@ -1,4 +1,6 @@
 package com.example.goindiacab.screens
+import androidx.compose.ui.tooling.preview.Preview
+import com.example.goindiacab.theme.GoIndiaCabTheme
 
 import androidx.compose.animation.*
 import androidx.compose.foundation.BorderStroke
@@ -466,6 +468,18 @@ private fun SearchResultRow(
             modifier = Modifier.padding(start = 72.dp, end = 16.dp),
             color = Color(0xFFF3F4F6),
             thickness = 1.dp
+        )
+    }
+}
+
+@Preview
+@Composable
+fun PickupLocationSelectionScreenPreview() {
+    GoIndiaCabTheme {
+        PickupLocationSelectionScreen(
+            viewModel = AppContainer.createLocationSelectionViewModel(),
+            onBackClick = {},
+            onLocationSelected = {}
         )
     }
 }
