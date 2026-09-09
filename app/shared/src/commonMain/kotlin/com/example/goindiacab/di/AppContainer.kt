@@ -146,4 +146,26 @@ object AppContainer {
     fun createReferEarnViewModel(): com.example.goindiacab.viewmodel.ReferEarnViewModel {
         return com.example.goindiacab.viewmodel.ReferEarnViewModel()
     }
+
+    /**
+     * Factory for SettingsViewModel.
+     */
+    fun createSettingsViewModel(): com.example.goindiacab.viewmodel.SettingsViewModel {
+        return com.example.goindiacab.viewmodel.SettingsViewModel()
+    }
+
+    /**
+     * Factory for SavedPlacesViewModel.
+     */
+    fun createSavedPlacesViewModel(): com.example.goindiacab.viewmodel.SavedPlacesViewModel {
+        return com.example.goindiacab.viewmodel.SavedPlacesViewModel()
+    }
+
+    /**
+     * Factory for AboutViewModel.
+     */
+    fun createAboutViewModel(): com.example.goindiacab.viewmodel.AboutViewModel {
+        return com.example.goindiacab.viewmodel.AboutViewModel()
+    }
 }
+

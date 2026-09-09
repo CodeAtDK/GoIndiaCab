@@ -601,3 +601,58 @@ fun MinusIcon(
         )
     }
 }
+
+@Composable
+fun TrashIcon(
+    modifier: Modifier = Modifier,
+    size: Dp = 18.dp,
+    color: Color = Color(0xFFEF4444)
+) {
+    Canvas(modifier = modifier.size(size)) {
+        val w = this.size.width
+        val h = this.size.height
+        val stroke = 1.8.dp.toPx()
+        // Lid bar
+        drawLine(
+            color = color,
+            start = androidx.compose.ui.geometry.Offset(w * 0.2f, h * 0.28f),
+            end = androidx.compose.ui.geometry.Offset(w * 0.8f, h * 0.28f),
+            strokeWidth = stroke,
+            cap = StrokeCap.Round
+        )
+        // Handle
+        val handle = Path().apply {
+            moveTo(w * 0.38f, h * 0.28f)
+            lineTo(w * 0.38f, h * 0.18f)
+            lineTo(w * 0.62f, h * 0.18f)
+            lineTo(w * 0.62f, h * 0.28f)
+        }
+        drawPath(handle, color = color, style = Stroke(width = stroke, cap = StrokeCap.Round, join = StrokeJoin.Round))
+        // Can body
+        val body = Path().apply {
+            moveTo(w * 0.26f, h * 0.28f)
+            lineTo(w * 0.30f, h * 0.82f)
+            cubicTo(w * 0.30f, h * 0.88f, w * 0.35f, h * 0.88f, w * 0.40f, h * 0.88f)
+            lineTo(w * 0.60f, h * 0.88f)
+            cubicTo(w * 0.65f, h * 0.88f, w * 0.70f, h * 0.88f, w * 0.70f, h * 0.82f)
+            lineTo(w * 0.74f, h * 0.28f)
+        }
+        drawPath(body, color = color, style = Stroke(width = stroke, cap = StrokeCap.Round, join = StrokeJoin.Round))
+        // Inner vertical slats
+        drawLine(
+            color = color,
+            start = androidx.compose.ui.geometry.Offset(w * 0.42f, h * 0.40f),
+            end = androidx.compose.ui.geometry.Offset(w * 0.42f, h * 0.75f),
+            strokeWidth = stroke * 0.85f,
+            cap = StrokeCap.Round
+        )
+        drawLine(
+            color = color,
+            start = androidx.compose.ui.geometry.Offset(w * 0.58f, h * 0.40f),
+            end = androidx.compose.ui.geometry.Offset(w * 0.58f, h * 0.75f),
+            strokeWidth = stroke * 0.85f,
+            cap = StrokeCap.Round
+        )
+    }
+}
+

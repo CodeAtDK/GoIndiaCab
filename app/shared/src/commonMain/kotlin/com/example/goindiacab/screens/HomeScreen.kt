@@ -68,7 +68,11 @@ fun HomeScreen(
     onProfileClick: () -> Unit = {},
     onCustomerSupportClick: () -> Unit = {},
     onRateUsClick: () -> Unit = {},
-    onReferEarnClick: () -> Unit = {}
+    onReferEarnClick: () -> Unit = {},
+    onSavedPlacesClick: () -> Unit = {},
+    onSettingsClick: () -> Unit = {},
+    onAboutClick: () -> Unit = {},
+    onPrivacyPolicyClick: () -> Unit = {}
 ) {
     val uiState by viewModel.uiState.collectAsState()
     var activeTab by remember { mutableStateOf(HomeBottomTab.HOME) }
@@ -295,7 +299,7 @@ fun HomeScreen(
                     HomeBottomTab.PROFILE -> {
                         HomeProfileView(
                             onLogoutClick = onLogoutClick,
-                            onSavedPlacesClick = onSelectPickupClick
+                            onSavedPlacesClick = onSavedPlacesClick
                         )
                     }
                 }
@@ -355,7 +359,10 @@ fun HomeScreen(
                     "Customer Support" -> onCustomerSupportClick()
                     "Rate Us" -> onRateUsClick()
                     "Refer & Earn" -> onReferEarnClick()
-                    "Saved Places" -> onSelectPickupClick()
+                    "Saved Places" -> onSavedPlacesClick()
+                    "Settings" -> onSettingsClick()
+                    "About GoIndiaCab" -> onAboutClick()
+                    "Privacy Policy" -> onPrivacyPolicyClick()
                     "Wallet" -> activeTab = HomeBottomTab.WALLET
                     "Notifications" -> activeTab = HomeBottomTab.OFFERS
                     "Outstation Cabs", "One-Way Cabs", "Hourly Rentals" -> onOutstationClick()

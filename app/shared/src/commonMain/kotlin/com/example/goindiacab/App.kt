@@ -75,7 +75,11 @@ enum class AppScreen(val displayName: String) {
     EDIT_PROFILE("Edit Profile"),
     CUSTOMER_SUPPORT("Help & Support"),
     RATE_US("Rate Us"),
-    REFER_EARN("Refer & Earn")
+    REFER_EARN("Refer & Earn"),
+    SETTINGS("Settings"),
+    SAVED_PLACES("Saved Places"),
+    ABOUT("About GoIndiaCab"),
+    PRIVACY_POLICY("Privacy Policy")
 }
 
 @Composable
@@ -358,7 +362,11 @@ fun App() {
                 }
                 AppScreen.CUSTOMER_SUPPORT,
                 AppScreen.RATE_US,
-                AppScreen.REFER_EARN -> {
+                AppScreen.REFER_EARN,
+                AppScreen.SETTINGS,
+                AppScreen.SAVED_PLACES,
+                AppScreen.ABOUT,
+                AppScreen.PRIVACY_POLICY -> {
                     popBackStack()
                 }
             }
@@ -545,7 +553,11 @@ fun App() {
                             onProfileClick = { navigateTo(AppScreen.PROFILE) },
                             onCustomerSupportClick = { navigateTo(AppScreen.CUSTOMER_SUPPORT) },
                             onRateUsClick = { navigateTo(AppScreen.RATE_US) },
-                            onReferEarnClick = { navigateTo(AppScreen.REFER_EARN) }
+                            onReferEarnClick = { navigateTo(AppScreen.REFER_EARN) },
+                            onSavedPlacesClick = { navigateTo(AppScreen.SAVED_PLACES) },
+                            onSettingsClick = { navigateTo(AppScreen.SETTINGS) },
+                            onAboutClick = { navigateTo(AppScreen.ABOUT) },
+                            onPrivacyPolicyClick = { navigateTo(AppScreen.PRIVACY_POLICY) }
                         )
                     }
                     // -------------------------------------------------------------
@@ -879,10 +891,10 @@ fun App() {
                         ProfileScreen(
                             onEditProfileClick = { navigateTo(AppScreen.EDIT_PROFILE) },
                             onMyBookingsClick = { navigateTo(AppScreen.HOME) },
-                            onLocationClick = { navigateTo(AppScreen.PICKUP_LOCATION_SELECTION) },
+                            onLocationClick = { navigateTo(AppScreen.SAVED_PLACES) },
                             onOffersCouponsClick = { navigateTo(AppScreen.APPLY_COUPON) },
                             onReferEarnClick = { navigateTo(AppScreen.REFER_EARN) },
-                            onSettingsClick = { toast("Settings coming soon") },
+                            onSettingsClick = { navigateTo(AppScreen.SETTINGS) },
                             onHelpSupportClick = { navigateTo(AppScreen.CUSTOMER_SUPPORT) },
                             onLogoutClick = { navigateTo(AppScreen.LOGIN, clearStack = true) },
                             onHomeTabClick = { navigateTo(AppScreen.HOME, clearStack = true) },
@@ -927,6 +939,36 @@ fun App() {
                             onSmsShareClick = { msg ->
                                 toast("Opening SMS to invite friend...")
                             }
+                        )
+                    }
+                    AppScreen.SETTINGS -> {
+                        SettingsScreen(
+                            viewModel = com.example.goindiacab.di.AppContainer.createSettingsViewModel(),
+                            onBackClick = { handleScreenBack() }
+                        )
+                    }
+                    AppScreen.SAVED_PLACES -> {
+                        SavedPlacesScreen(
+                            viewModel = com.example.goindiacab.di.AppContainer.createSavedPlacesViewModel(),
+                            onBackClick = { handleScreenBack() },
+                            onSelectPlace = { place ->
+                                toast("Selected: ${place.title}")
+                                handleScreenBack()
+                            }
+                        )
+                    }
+                    AppScreen.ABOUT -> {
+                        AboutScreen(
+                            viewModel = com.example.goindiacab.di.AppContainer.createAboutViewModel(),
+                            onBackClick = { handleScreenBack() },
+                            onPrivacyPolicyClick = { navigateTo(AppScreen.PRIVACY_POLICY) },
+                            onTermsClick = { toast("Terms & Conditions") }
+                        )
+                    }
+                    AppScreen.PRIVACY_POLICY -> {
+                        PrivacyPolicyScreen(
+                            onBackClick = { handleScreenBack() },
+                            onContactOfficerClick = { toast("Opening security@goindiacab.com") }
                         )
                     }
                 }
