@@ -1,6 +1,7 @@
 package com.example.goindiacab.data.repository
 
 import com.example.goindiacab.data.models.*
+import com.example.goindiacab.domain.DynamicPaymentScheduleEngine
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -456,55 +457,28 @@ class BookingRepositoryImpl : BookingRepository {
     override fun getTripPaymentSchedule(): Flow<NetworkResult<TripPaymentSchedule>> = flow {
         val session = _bookingSession.value
         val total = if (session.fareBreakdown.totalEstimatedFare > 0) session.fareBreakdown.totalEstimatedFare else 20000
-        val advance = (total * 0.10).toInt().coerceAtLeast(1000)
-        val tripStart = (total * 0.40).toInt()
-        val midTrip = (total * 0.30).toInt()
-        val tripEnd = total - advance - tripStart - midTrip
-
         val originCity = session.pickupLocation.substringBefore(",").substringBefore("(").trim().ifBlank { "Delhi" }
         val destCity = session.dropLocation.substringBefore(",").trim().ifBlank { "Jaipur" }
 
-        val schedule = _paymentSchedule.value.copy(
+        val schedule = DynamicPaymentScheduleEngine.generateSchedule(
+            totalFare = total,
+            tripDurationDays = session.tripDurationDays,
+            pickupDate = session.travelDate.ifBlank { "Tomorrow" },
             routeSummary = "$originCity → $destCity Multi-Stop",
-            durationAndDistance = "${session.tripDurationDays} Days • ${session.routeDistanceKm} km",
-            totalAmount = total,
-            milestones = listOf(
-                PaymentScheduleMilestone(
-                    id = "m1",
-                    title = "Booking Advance (10%)",
-                    subtitle = "₹$advance • Paid via UPI",
-                    amount = advance,
-                    percentage = 10,
-                    status = _paymentSchedule.value.milestones.find { it.id == "m1" }?.status ?: MilestoneStatus.PAID
-                ),
-                PaymentScheduleMilestone(
-                    id = "m2",
-                    title = "Trip Start (Day 1) (40%)",
-                    subtitle = "₹$tripStart • Due Tomorrow",
-                    amount = tripStart,
-                    percentage = 40,
-                    status = _paymentSchedule.value.milestones.find { it.id == "m2" }?.status ?: MilestoneStatus.DUE
-                ),
-                PaymentScheduleMilestone(
-                    id = "m3",
-                    title = "Mid Trip (Day 5) (30%)",
-                    subtitle = "₹$midTrip • Scheduled",
-                    amount = midTrip,
-                    percentage = 30,
-                    status = _paymentSchedule.value.milestones.find { it.id == "m3" }?.status ?: MilestoneStatus.UPCOMING
-                ),
-                PaymentScheduleMilestone(
-                    id = "m4",
-                    title = "Trip End (20%)",
-                    subtitle = "₹$tripEnd • Scheduled",
-                    amount = tripEnd,
-                    percentage = 20,
-                    status = _paymentSchedule.value.milestones.find { it.id == "m4" }?.status ?: MilestoneStatus.UPCOMING
-                )
-            )
+            distanceKm = session.routeDistanceKm
         )
-        _paymentSchedule.value = schedule
-        emit(NetworkResult.Success(schedule))
+
+        // Preserve any milestone statuses that were already updated
+        val existingStatuses = _paymentSchedule.value.milestones.associate { it.id to it.status }
+        val mergedMilestones = schedule.milestones.map { m ->
+            existingStatuses[m.id]?.let { existingStatus ->
+                m.copy(status = existingStatus)
+            } ?: m
+        }
+
+        val finalSchedule = schedule.copy(milestones = mergedMilestones)
+        _paymentSchedule.value = finalSchedule
+        emit(NetworkResult.Success(finalSchedule))
     }
 
     override fun markMilestonePaid(milestoneId: String): Flow<NetworkResult<TripPaymentSchedule>> = flow {
@@ -521,8 +495,13 @@ class BookingRepositoryImpl : BookingRepository {
         kotlinx.coroutines.delay(1000)
         if (otp == "7429" || otp.length == 4) {
             val current = _paymentSchedule.value
-            val updatedMilestones = current.milestones.map { m ->
-                if (m.id == "m2") m.copy(status = MilestoneStatus.PAID) else m
+            val dueIndex = current.milestones.indexOfFirst { it.status == MilestoneStatus.DUE }
+            val updatedMilestones = current.milestones.mapIndexed { idx, m ->
+                when {
+                    idx == dueIndex -> m.copy(status = MilestoneStatus.PAID)
+                    idx == dueIndex + 1 && m.status == MilestoneStatus.UPCOMING -> m.copy(status = MilestoneStatus.DUE)
+                    else -> m
+                }
             }
             _paymentSchedule.value = current.copy(milestones = updatedMilestones)
             emit(NetworkResult.Success(true))

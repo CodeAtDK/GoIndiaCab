@@ -25,6 +25,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.goindiacab.components.AdaptiveContainer
 import com.example.goindiacab.components.PlatformBackHandler
+import com.example.goindiacab.data.models.MilestoneStatus
 import com.example.goindiacab.data.models.PaymentMethodType
 import com.example.goindiacab.viewmodel.BookingFlowViewModel
 import goindiacab.app.shared.generated.resources.*
@@ -57,11 +58,19 @@ fun TripStartPaymentScreen(
     val schedule by viewModel.paymentSchedule.collectAsState()
     val session by viewModel.bookingSession.collectAsState()
 
+    androidx.compose.runtime.LaunchedEffect(Unit) {
+        viewModel.loadPaymentSchedule()
+    }
+
+    val dueMilestone = schedule.milestones.find { it.status == MilestoneStatus.DUE }
+        ?: schedule.milestones.getOrNull(1)
+        ?: schedule.milestones.firstOrNull()
+
     val totalFare = if (schedule.totalAmount > 0) schedule.totalAmount else 20000
-    val startPaymentAmount = (totalFare * 0.40).toInt().coerceAtLeast(8000)
-    val previousPaymentAmount = (totalFare * 0.10).toInt().coerceAtLeast(2000)
-    val midTripAmount = (totalFare * 0.30).toInt().coerceAtLeast(6000)
-    val tripEndAmount = totalFare - previousPaymentAmount - startPaymentAmount - midTripAmount
+    val startPaymentAmount = dueMilestone?.amount ?: (totalFare * 0.40).toInt().coerceAtLeast(8000)
+    val previousPaidMilestones = schedule.milestones.filter { it.status == MilestoneStatus.PAID }
+    val previousPaymentAmount = previousPaidMilestones.sumOf { it.amount }
+    val futureMilestones = schedule.milestones.filter { it.id != dueMilestone?.id && it.status != MilestoneStatus.PAID }
 
     var selectedMethod by remember { mutableStateOf(PaymentMethodType.GOOGLE_PAY) }
 
@@ -96,7 +105,7 @@ fun TripStartPaymentScreen(
                 }
 
                 Text(
-                    text = "Pay Trip Start (40%)",
+                    text = dueMilestone?.let { "Pay ${it.title}" } ?: "Pay Trip Start (40%)",
                     color = Color.White,
                     fontSize = 19.sp,
                     fontWeight = FontWeight.Bold,
@@ -194,15 +203,18 @@ fun TripStartPaymentScreen(
                         )
 
                         TripAmountRow(
-                            label = "Trip Start Payment (40%)",
+                            label = dueMilestone?.title ?: "Trip Start Advance (40%)",
                             amount = "₹${startPaymentAmount.toString().reversed().chunked(3).joinToString(",").reversed()}"
                         )
 
-                        TripAmountRow(
-                            label = "Previous Payments (10%)",
-                            amount = "-₹${previousPaymentAmount.toString().reversed().chunked(3).joinToString(",").reversed()}",
-                            amountColor = ColorGreen
-                        )
+                        if (previousPaymentAmount > 0) {
+                            val prevPct = previousPaidMilestones.sumOf { it.percentage }
+                            TripAmountRow(
+                                label = "Previous Advance ($prevPct%)",
+                                amount = "-₹${previousPaymentAmount.toString().reversed().chunked(3).joinToString(",").reversed()}",
+                                amountColor = ColorGreen
+                            )
+                        }
 
                         // Dashed Divider
                         Box(
@@ -255,22 +267,45 @@ fun TripStartPaymentScreen(
                             .padding(18.dp),
                         verticalArrangement = Arrangement.spacedBy(14.dp)
                     ) {
-                        Text(
-                            text = "Remaining Payment Schedule",
-                            fontSize = 16.sp,
-                            fontWeight = FontWeight.Bold,
-                            color = ColorTextDark
-                        )
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.SpaceBetween,
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Text(
+                                text = "Remaining Payment Schedule",
+                                fontSize = 16.sp,
+                                fontWeight = FontWeight.Bold,
+                                color = ColorTextDark
+                            )
+                            Surface(
+                                shape = RoundedCornerShape(6.dp),
+                                color = Color(0xFFEFF6FF)
+                            ) {
+                                Text(
+                                    text = "100% In Advance",
+                                    fontSize = 11.sp,
+                                    fontWeight = FontWeight.Bold,
+                                    color = Color(0xFF1D4ED8),
+                                    modifier = Modifier.padding(horizontal = 6.dp, vertical = 2.dp)
+                                )
+                            }
+                        }
 
-                        RemainingMilestoneRow(
-                            title = "Mid Trip (Day 5)",
-                            amount = "₹${midTripAmount.toString().reversed().chunked(3).joinToString(",").reversed()} (30%)"
-                        )
-
-                        RemainingMilestoneRow(
-                            title = "Trip End",
-                            amount = "₹${tripEndAmount.coerceAtLeast(4000).toString().reversed().chunked(3).joinToString(",").reversed()} (20%)"
-                        )
+                        if (futureMilestones.isNotEmpty()) {
+                            futureMilestones.forEach { milestone ->
+                                RemainingMilestoneRow(
+                                    title = milestone.title,
+                                    amount = "₹${milestone.amount.toString().reversed().chunked(3).joinToString(",").reversed()} (${milestone.percentage}%)"
+                                )
+                            }
+                        } else {
+                            Text(
+                                text = "All subsequent installments are complete or included in this stage.",
+                                fontSize = 13.sp,
+                                color = ColorTextMuted
+                            )
+                        }
                     }
                 }
 

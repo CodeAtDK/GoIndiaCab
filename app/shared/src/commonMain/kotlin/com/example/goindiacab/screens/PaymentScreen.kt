@@ -61,16 +61,19 @@ fun PaymentScreen(
 ) {
     val session by viewModel.bookingSession.collectAsState()
     val paymentUiState by viewModel.paymentUiState.collectAsState()
+    val paymentSchedule by viewModel.paymentSchedule.collectAsState()
+
+    androidx.compose.runtime.LaunchedEffect(Unit) {
+        viewModel.loadPaymentSchedule()
+    }
 
     val fare = session.fareBreakdown
-    val totalFare = fare.totalEstimatedFare
-    val advanceTenPercent = fare.advanceDepositAmount
+    val totalFare = if (paymentSchedule.totalAmount > 0) paymentSchedule.totalAmount else fare.totalEstimatedFare
+    val advanceMilestone = paymentSchedule.milestones.firstOrNull { it.id == "m1" }
+    val advancePercentage = advanceMilestone?.percentage ?: fare.advanceDepositPercent
+    val advanceAmount = advanceMilestone?.amount ?: ((totalFare * advancePercentage) / 100)
     val discount = fare.discountAmount
-    val payNowAmount = (advanceTenPercent - discount).coerceAtLeast(500)
-
-    val day1Amount = (totalFare * 0.40).toInt()
-    val midTripAmount = (totalFare * 0.30).toInt()
-    val tripEndAmount = totalFare - advanceTenPercent - day1Amount - midTripAmount
+    val payNowAmount = (advanceAmount - discount).coerceAtLeast(500)
 
     var selectedMethod by remember { mutableStateOf(PaymentMethodType.GOOGLE_PAY) }
 
@@ -105,7 +108,7 @@ fun PaymentScreen(
                 }
 
                 Text(
-                    text = "Pay Advance (10%)",
+                    text = "Pay Advance ($advancePercentage%)",
                     color = Color.White,
                     fontSize = 20.sp,
                     fontWeight = FontWeight.Bold,
@@ -151,7 +154,7 @@ fun PaymentScreen(
                             modifier = Modifier.size(22.dp)
                         )
                         Text(
-                            text = "Pay 10% to confirm booking. Partner will be assigned after payment.",
+                            text = "Pay $advancePercentage% booking advance to confirm. Partner assigned immediately. All subsequent installments are advance payments before each segment starts.",
                             fontSize = 13.sp,
                             color = Color(0xFF4B5563),
                             lineHeight = 18.sp
@@ -180,7 +183,7 @@ fun PaymentScreen(
                         )
 
                         AmountRow(title = "Trip Total", amount = "₹$totalFare")
-                        AmountRow(title = "Advance Payment (10%)", amount = "₹$advanceTenPercent")
+                        AmountRow(title = "Booking Advance ($advancePercentage%)", amount = "₹$advanceAmount")
 
                         if (discount > 0) {
                             Row(
@@ -254,16 +257,51 @@ fun PaymentScreen(
                             .padding(16.dp),
                         verticalArrangement = Arrangement.spacedBy(12.dp)
                     ) {
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.SpaceBetween,
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Text(
+                                text = "Remaining Payment Schedule",
+                                fontSize = 16.sp,
+                                fontWeight = FontWeight.Bold,
+                                color = ColorTextPrimary
+                            )
+                            Surface(
+                                shape = RoundedCornerShape(6.dp),
+                                color = Color(0xFFEFF6FF)
+                            ) {
+                                Text(
+                                    text = "100% In Advance",
+                                    fontSize = 11.sp,
+                                    fontWeight = FontWeight.Bold,
+                                    color = Color(0xFF1D4ED8),
+                                    modifier = Modifier.padding(horizontal = 6.dp, vertical = 2.dp)
+                                )
+                            }
+                        }
+
                         Text(
-                            text = "Remaining Payment Schedule",
-                            fontSize = 16.sp,
-                            fontWeight = FontWeight.Bold,
-                            color = ColorTextPrimary
+                            text = "Every installment is collected in advance before each trip segment begins.",
+                            fontSize = 12.sp,
+                            color = ColorTextSecondary,
+                            lineHeight = 16.sp
                         )
 
-                        ScheduleMilestoneItem("Trip Start (Day 1)", "₹$day1Amount (40%)")
-                        ScheduleMilestoneItem("Mid Trip (Day 5)", "₹$midTripAmount (30%)")
-                        ScheduleMilestoneItem("Trip End", "₹$tripEndAmount (20%)")
+                        val remainingMilestones = paymentSchedule.milestones.filter { it.id != "m1" }
+                        if (remainingMilestones.isNotEmpty()) {
+                            remainingMilestones.forEach { milestone ->
+                                ScheduleMilestoneItem(
+                                    title = milestone.title,
+                                    amount = "₹${milestone.amount} (${milestone.percentage}%)"
+                                )
+                            }
+                        } else {
+                            ScheduleMilestoneItem("Trip Start (Day 1)", "₹${(totalFare * 0.40).toInt()} (40%)")
+                            ScheduleMilestoneItem("Mid Trip", "₹${(totalFare * 0.30).toInt()} (30%)")
+                            ScheduleMilestoneItem("Final Leg", "₹${(totalFare * 0.20).toInt()} (20%)")
+                        }
                     }
                 }
 
