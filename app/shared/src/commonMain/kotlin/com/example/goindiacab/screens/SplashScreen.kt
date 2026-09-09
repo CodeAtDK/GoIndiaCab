@@ -1,5 +1,9 @@
 package com.example.goindiacab.screens
 
+import androidx.compose.animation.core.Animatable
+import androidx.compose.animation.core.FastOutSlowInEasing
+import androidx.compose.animation.core.LinearEasing
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -11,15 +15,14 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -32,6 +35,7 @@ import com.example.goindiacab.components.BrandTextLogo
 import com.example.goindiacab.theme.*
 import goindiacab.app.shared.generated.resources.*
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.painterResource
 
 private val SplashDarkBg = Color(0xFF06101E)
@@ -39,23 +43,67 @@ private val AccentOrange = Color(0xFFF97316)
 private val TextMuted = Color(0xFF94A3B8)
 
 /**
- * Screen 1: New Popular Getaways Splash Screen (splash-screen.svg).
+ * Screen 1: Popular Getaways Splash Screen (splash-screen.svg) with Zoom-In Transition.
  *
  * Features:
  * - 4 Destination showcase cards (Goa, Manali, Jaipur, Kerala).
  * - Central GoIndiaCab emblem with orange brand accent.
  * - Popular Getaways headline with tagline.
  * - Trust badge footer ("100% Verified Drivers • Safe & Secure").
- * - Auto-advances or advances on user tap.
+ * - Cinematic 3D Zoom-In transition on exit towards Onboarding.
  */
 @Composable
 fun SplashScreen(
     onNavigateNext: () -> Unit = {}
 ) {
-    // Auto-advance to next screen after 2.5 seconds or on tap
+    var isExiting by remember { mutableStateOf(false) }
+    val zoomScale = remember { Animatable(1f) }
+    val centerScale = remember { Animatable(1f) }
+    val contentAlpha = remember { Animatable(1f) }
+    val cardsSeparation = remember { Animatable(0f) }
+
+    fun triggerExit() {
+        if (!isExiting) {
+            isExiting = true
+        }
+    }
+
+    // Auto-advance trigger
     LaunchedEffect(Unit) {
-        delay(2500L)
-        onNavigateNext()
+        delay(2300L)
+        triggerExit()
+    }
+
+    // Cinematic Zoom-In Animation upon exit
+    LaunchedEffect(isExiting) {
+        if (isExiting) {
+            launch {
+                zoomScale.animateTo(
+                    targetValue = 1.85f,
+                    animationSpec = tween(durationMillis = 600, easing = FastOutSlowInEasing)
+                )
+            }
+            launch {
+                centerScale.animateTo(
+                    targetValue = 2.4f,
+                    animationSpec = tween(durationMillis = 600, easing = FastOutSlowInEasing)
+                )
+            }
+            launch {
+                cardsSeparation.animateTo(
+                    targetValue = 40f,
+                    animationSpec = tween(durationMillis = 550, easing = FastOutSlowInEasing)
+                )
+            }
+            launch {
+                contentAlpha.animateTo(
+                    targetValue = 0f,
+                    animationSpec = tween(durationMillis = 500, delayMillis = 100, easing = LinearEasing)
+                )
+            }
+            delay(580L)
+            onNavigateNext()
+        }
     }
 
     AdaptiveContainer(
@@ -68,7 +116,12 @@ fun SplashScreen(
                 .clickable(
                     interactionSource = remember { MutableInteractionSource() },
                     indication = null
-                ) { onNavigateNext() }
+                ) { triggerExit() }
+                .graphicsLayer {
+                    scaleX = zoomScale.value
+                    scaleY = zoomScale.value
+                    alpha = contentAlpha.value
+                }
                 .verticalScroll(rememberScrollState())
                 .padding(horizontal = 20.dp, vertical = 24.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
@@ -76,7 +129,11 @@ fun SplashScreen(
         ) {
             // 1. Top Section: First 2 Destination Cards (Goa & Manali)
             Column(
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .graphicsLayer {
+                        translationY = -cardsSeparation.value
+                    },
                 verticalArrangement = Arrangement.spacedBy(16.dp)
             ) {
                 Row(
@@ -98,11 +155,17 @@ fun SplashScreen(
 
             Spacer(modifier = Modifier.height(24.dp))
 
-            // 2. Center Section: Brand Identity Emblem & Popular Getaways
+            // 2. Center Section: Brand Identity Emblem & Popular Getaways (Dramatic focal zoom)
             Column(
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.Center,
-                modifier = Modifier.padding(vertical = 12.dp)
+                modifier = Modifier
+                    .padding(vertical = 12.dp)
+                    .graphicsLayer {
+                        val focal = centerScale.value / zoomScale.value
+                        scaleX = focal
+                        scaleY = focal
+                    }
             ) {
                 AppLogoIcon(
                     size = 80.dp,
@@ -155,7 +218,11 @@ fun SplashScreen(
 
             // 3. Bottom Destination Cards: Jaipur & Kerala
             Row(
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .graphicsLayer {
+                        translationY = cardsSeparation.value
+                    },
                 horizontalArrangement = Arrangement.spacedBy(14.dp)
             ) {
                 DestinationCard(

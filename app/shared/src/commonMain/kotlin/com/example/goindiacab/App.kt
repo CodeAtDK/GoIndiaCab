@@ -1,11 +1,16 @@
 package com.example.goindiacab
 
+import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.Crossfade
+import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
+import androidx.compose.animation.scaleIn
+import androidx.compose.animation.scaleOut
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
+import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.background
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.*
@@ -384,10 +389,24 @@ fun App() {
         }
 
         Box(modifier = Modifier.fillMaxSize()) {
-            // Main Screen Content with smooth animated transitions
-            Crossfade(
+            // Main Screen Content with smooth animated transitions (Zoom-in from Splash to Onboarding)
+            AnimatedContent(
                 targetState = currentScreen,
-                animationSpec = tween(400),
+                transitionSpec = {
+                    if (initialState == AppScreen.SPLASH && targetState == AppScreen.ONBOARDING) {
+                        (fadeIn(animationSpec = tween(500)) + scaleIn(
+                            initialScale = 0.85f,
+                            animationSpec = tween(500, easing = FastOutSlowInEasing)
+                        )).togetherWith(
+                            fadeOut(animationSpec = tween(400)) + scaleOut(
+                                targetScale = 1.6f,
+                                animationSpec = tween(500, easing = FastOutSlowInEasing)
+                            )
+                        )
+                    } else {
+                        fadeIn(animationSpec = tween(300)).togetherWith(fadeOut(animationSpec = tween(300)))
+                    }
+                },
                 modifier = Modifier.fillMaxSize()
             ) { screen ->
                 when (screen) {
@@ -395,9 +414,9 @@ fun App() {
                     // Phase 1: Authentication, Onboarding & User Session Lifecycle
                     // -------------------------------------------------------------
                     AppScreen.SPLASH -> {
-                        // App launch splash screen; animates brand identity then checks auth session
+                        // App launch splash screen; animates brand identity with zoom-in transition to onboarding
                         SplashScreen(
-                            onNavigateNext = { navigateTo(AppScreen.SESSION_CHECK, clearStack = true) }
+                            onNavigateNext = { navigateTo(AppScreen.ONBOARDING, clearStack = true) }
                         )
                     }
                     AppScreen.SESSION_CHECK -> {
