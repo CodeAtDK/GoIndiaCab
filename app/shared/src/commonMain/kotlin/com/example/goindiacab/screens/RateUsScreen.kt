@@ -202,7 +202,8 @@ fun RateUsScreen(
                     ) {
                         StarIcon(
                             size = 36.dp,
-                            color = if (isSelected) RateUsOrange else RateUsStarInactive
+                            color = if (isSelected) RateUsOrange else RateUsStarInactive,
+                            isFilled = isSelected
                         )
                     }
                 }

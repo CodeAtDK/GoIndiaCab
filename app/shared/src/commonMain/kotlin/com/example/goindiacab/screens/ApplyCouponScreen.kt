@@ -57,6 +57,7 @@ private val ColorTextSecondary = Color(0xFF6B7280)
 fun ApplyCouponScreen(
     viewModel: BookingFlowViewModel,
     onBackClick: () -> Unit,
+    onCouponApplied: () -> Unit = onBackClick,
     modifier: Modifier = Modifier
 ) {
     val session by viewModel.bookingSession.collectAsState()
@@ -155,6 +156,7 @@ fun ApplyCouponScreen(
                                 focusManager.clearFocus()
                                 if (couponInput.isNotBlank()) {
                                     viewModel.handleAction(CabDetailAction.ApplyCoupon(couponInput))
+                                    onCouponApplied()
                                 }
                             }
                         )
@@ -165,6 +167,7 @@ fun ApplyCouponScreen(
                             focusManager.clearFocus()
                             if (couponInput.isNotBlank()) {
                                 viewModel.handleAction(CabDetailAction.ApplyCoupon(couponInput))
+                                onCouponApplied()
                             }
                         },
                         shape = RoundedCornerShape(10.dp),
@@ -223,6 +226,7 @@ fun ApplyCouponScreen(
                         isCurrentlyApplied = appliedCoupon?.code.equals(coupon.code, ignoreCase = true),
                         onApplyClick = {
                             viewModel.handleAction(CabDetailAction.SelectCouponItem(coupon))
+                            onCouponApplied()
                         },
                         onRemoveClick = {
                             viewModel.handleAction(CabDetailAction.RemoveCoupon)

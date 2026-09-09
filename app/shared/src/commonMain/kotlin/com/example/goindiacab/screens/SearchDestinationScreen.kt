@@ -59,6 +59,7 @@ import org.jetbrains.compose.resources.painterResource
 @Composable
 fun SearchDestinationScreen(
     viewModel: SearchDestinationViewModel = remember { AppContainer.createSearchDestinationViewModel() },
+    title: String = "Search Destination",
     onBackClick: () -> Unit,
     onDestinationSelected: (String) -> Unit
 ) {
@@ -74,7 +75,7 @@ fun SearchDestinationScreen(
             containerColor = SurfaceGray,
             topBar = {
                 OutstationTopBar(
-                    title = "Search Destination",
+                    title = title,
                     onBackClick = onBackClick
                 )
             }

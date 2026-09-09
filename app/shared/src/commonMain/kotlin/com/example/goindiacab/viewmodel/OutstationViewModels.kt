@@ -120,9 +120,9 @@ data class MultiStopRouteUiState(
         pickupPoint = "",
         stops = emptyList(),
         dropoffPoint = "",
-        totalDistanceKm = 0,
-        estDurationText = "",
-        totalEstimateInr = 0
+        totalDistanceKm = 580,
+        estDurationText = "~10 Hours",
+        totalEstimateInr = 12400
     ),
     val isScheduleOnly: Boolean = true
 )

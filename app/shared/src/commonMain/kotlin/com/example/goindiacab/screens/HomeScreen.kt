@@ -47,7 +47,6 @@ enum class HomeBottomTab(val label: String) {
     HOME("Home"),
     MY_TRIPS("My Trips"),
     OFFERS("Offers"),
-    WALLET("Wallet"),
     PROFILE("Profile")
 }
 
@@ -73,7 +72,9 @@ fun HomeScreen(
     onSettingsClick: () -> Unit = {},
     onAboutClick: () -> Unit = {},
     onPrivacyPolicyClick: () -> Unit = {},
-    onMyReviewsClick: () -> Unit = {}
+    onMyReviewsClick: () -> Unit = {},
+    onMyTripsClick: () -> Unit = {},
+    onOngoingTripClick: () -> Unit = {}
 ) {
     val uiState by viewModel.uiState.collectAsState()
     var activeTab by remember { mutableStateOf(HomeBottomTab.HOME) }
@@ -271,29 +272,20 @@ fun HomeScreen(
                 }
             }
             HomeBottomTab.MY_TRIPS -> {
-                        HomeMyTripsView(
-                            recentTrips = uiState.feedData?.recentTrips ?: emptyList(),
-                            onBookAgain = { trip ->
-                                viewModel.bookAgain(trip)
-                                onBookAgainClick(trip)
-                            },
-                            onBookNewRide = {
-                                activeTab = HomeBottomTab.HOME
-                            }
-                        )
-                    }
+                MyTripsScreen(
+                    onBackClick = { activeTab = HomeBottomTab.HOME },
+                    onTripClick = {},
+                    onOngoingTripClick = { onOngoingTripClick() },
+                    onHomeClick = { activeTab = HomeBottomTab.HOME },
+                    onOffersClick = { activeTab = HomeBottomTab.OFFERS },
+                    onProfileClick = onProfileClick
+                )
+            }
                     HomeBottomTab.OFFERS -> {
                         HomeOffersView(
                             onBookWithOffer = {
                                 activeTab = HomeBottomTab.HOME
                                 onOutstationClick()
-                            }
-                        )
-                    }
-                    HomeBottomTab.WALLET -> {
-                        HomeWalletView(
-                            onAddMoneyClick = {
-                                activeTab = HomeBottomTab.HOME
                             }
                         )
                     }
@@ -355,7 +347,7 @@ fun HomeScreen(
             onItemClick = { item ->
                 isDrawerOpen = false
                 when (item) {
-                    "My Trips" -> activeTab = HomeBottomTab.MY_TRIPS
+                    "My Trips" -> onMyTripsClick()
                     "Profile" -> onProfileClick()
                     "Customer Support" -> onCustomerSupportClick()
                     "Rate Us" -> onRateUsClick()
@@ -364,7 +356,6 @@ fun HomeScreen(
                     "Settings" -> onSettingsClick()
                     "About GoIndiaCab" -> onAboutClick()
                     "Privacy Policy" -> onPrivacyPolicyClick()
-                    "Wallet" -> activeTab = HomeBottomTab.WALLET
                     "Notifications" -> onNotificationsClick()
                     "My Reviews" -> onMyReviewsClick()
                     "Outstation Cabs", "One-Way Cabs", "Hourly Rentals" -> onOutstationClick()
@@ -1220,22 +1211,7 @@ private fun HomeBottomNavigationBar(
                 onClick = { onTabSelected(HomeBottomTab.OFFERS) }
             )
 
-            // 4. Wallet
-            BottomNavItem(
-                label = "Wallet",
-                isSelected = activeTab == HomeBottomTab.WALLET,
-                icon = {
-                    Icon(
-                        painter = painterResource(Res.drawable.ic_wallet_card),
-                        contentDescription = null,
-                        tint = if (activeTab == HomeBottomTab.WALLET) AccentOrange else TextMuted,
-                        modifier = Modifier.size(20.dp)
-                    )
-                },
-                onClick = { onTabSelected(HomeBottomTab.WALLET) }
-            )
-
-            // 5. Profile
+            // 4. Profile
             BottomNavItem(
                 label = "Profile",
                 isSelected = activeTab == HomeBottomTab.PROFILE,

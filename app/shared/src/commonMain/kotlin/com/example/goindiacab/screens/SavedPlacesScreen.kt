@@ -82,6 +82,7 @@ private val SoftBackground = Color(0xFFF8FAFC)
 fun SavedPlacesScreen(
     viewModel: SavedPlacesViewModel = remember { SavedPlacesViewModel() },
     onBackClick: () -> Unit = {},
+    onAddNewAddressClick: () -> Unit = { viewModel.openAddPlace() },
     onSelectPlace: (SavedPlaceItem) -> Unit = {}
 ) {
     val uiState by viewModel.uiState.collectAsState()
@@ -113,7 +114,7 @@ fun SavedPlacesScreen(
                     // Outlined Button: "+ Add New Address"
                     item {
                         OutlinedButton(
-                            onClick = { viewModel.openAddPlace() },
+                            onClick = onAddNewAddressClick,
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .height(52.dp),

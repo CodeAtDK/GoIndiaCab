@@ -190,7 +190,8 @@ private fun ReviewSummaryCard(
                         for (i in 1..5) {
                             StarIcon(
                                 size = 16.dp,
-                                color = if (i <= roundedRating) StarGold else StarInactive
+                                color = if (i <= roundedRating) StarGold else StarInactive,
+                                isFilled = i <= roundedRating
                             )
                         }
                     }
@@ -293,7 +294,8 @@ private fun ReviewItemCard(
                 for (i in 1..5) {
                     StarIcon(
                         size = 16.dp,
-                        color = if (i <= review.rating) StarGold else StarInactive
+                        color = if (i <= review.rating) StarGold else StarInactive,
+                        isFilled = i <= review.rating
                     )
                 }
             }

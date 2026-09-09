@@ -75,7 +75,7 @@ fun PaymentScreen(
     val discount = fare.discountAmount
     val payNowAmount = (advanceAmount - discount).coerceAtLeast(500)
 
-    var selectedMethod by remember { mutableStateOf(PaymentMethodType.GOOGLE_PAY) }
+    var selectedMethod by remember { mutableStateOf(PaymentMethodType.UPI) }
 
     // Hardware & system back button support
     PlatformBackHandler(enabled = true) {
@@ -305,7 +305,7 @@ fun PaymentScreen(
                     }
                 }
 
-                // Preferred UPI Apps Card
+                // Payment Methods Card
                 Card(
                     modifier = Modifier.fillMaxWidth(),
                     shape = RoundedCornerShape(16.dp),
@@ -319,72 +319,29 @@ fun PaymentScreen(
                         verticalArrangement = Arrangement.spacedBy(10.dp)
                     ) {
                         Text(
-                            text = "Preferred UPI Apps",
+                            text = "Payment Method",
                             fontSize = 16.sp,
                             fontWeight = FontWeight.Bold,
                             color = ColorTextPrimary
                         )
 
-                        UpiOptionRow(
-                            name = "Google Pay",
-                            isSelected = selectedMethod == PaymentMethodType.GOOGLE_PAY,
-                            onSelect = { selectedMethod = PaymentMethodType.GOOGLE_PAY }
+                        PaymentMethodRow(
+                            name = "UPI",
+                            subtitle = "Google Pay, PhonePe, Paytm, BHIM",
+                            isSelected = selectedMethod == PaymentMethodType.UPI,
+                            onSelect = { selectedMethod = PaymentMethodType.UPI }
                         )
-                        UpiOptionRow(
-                            name = "PhonePe",
-                            isSelected = selectedMethod == PaymentMethodType.PHONE_PE,
-                            onSelect = { selectedMethod = PaymentMethodType.PHONE_PE }
+                        PaymentMethodRow(
+                            name = "Netbanking",
+                            subtitle = "All Major Indian Banks",
+                            isSelected = selectedMethod == PaymentMethodType.NETBANKING,
+                            onSelect = { selectedMethod = PaymentMethodType.NETBANKING }
                         )
-                        UpiOptionRow(
-                            name = "Paytm",
-                            isSelected = selectedMethod == PaymentMethodType.PAYTM,
-                            onSelect = { selectedMethod = PaymentMethodType.PAYTM }
-                        )
-                    }
-                }
-
-                // GoIndiaCab Wallet
-                Card(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .clickable { selectedMethod = PaymentMethodType.WALLET },
-                    shape = RoundedCornerShape(12.dp),
-                    colors = CardDefaults.cardColors(containerColor = Color.White),
-                    border = if (selectedMethod == PaymentMethodType.WALLET) {
-                        CardDefaults.outlinedCardBorder().copy(brush = androidx.compose.ui.graphics.SolidColor(ColorBlue), width = 1.5.dp)
-                    } else null,
-                    elevation = CardDefaults.cardElevation(defaultElevation = 1.dp)
-                ) {
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(16.dp),
-                        horizontalArrangement = Arrangement.SpaceBetween,
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Row(
-                            verticalAlignment = Alignment.CenterVertically,
-                            horizontalArrangement = Arrangement.spacedBy(12.dp)
-                        ) {
-                            Icon(
-                                painter = painterResource(Res.drawable.ic_wallet_card),
-                                contentDescription = null,
-                                tint = ColorNavy,
-                                modifier = Modifier.size(22.dp)
-                            )
-                            Text(
-                                text = "GoIndiaCab Wallet",
-                                fontSize = 15.sp,
-                                fontWeight = FontWeight.SemiBold,
-                                color = ColorTextPrimary
-                            )
-                        }
-
-                        Text(
-                            text = "₹1,250",
-                            fontSize = 15.sp,
-                            fontWeight = FontWeight.Bold,
-                            color = ColorBlue
+                        PaymentMethodRow(
+                            name = "Cards (Credit / Debit)",
+                            subtitle = "Visa, Mastercard, RuPay, Maestro",
+                            isSelected = selectedMethod == PaymentMethodType.CARDS,
+                            onSelect = { selectedMethod = PaymentMethodType.CARDS }
                         )
                     }
                 }
@@ -510,8 +467,9 @@ private fun ScheduleMilestoneItem(title: String, amount: String) {
 }
 
 @Composable
-private fun UpiOptionRow(
+private fun PaymentMethodRow(
     name: String,
+    subtitle: String? = null,
     isSelected: Boolean,
     onSelect: () -> Unit
 ) {
@@ -559,12 +517,22 @@ private fun UpiOptionRow(
                     }
                 }
 
-                Text(
-                    text = name,
-                    fontSize = 15.sp,
-                    fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Medium,
-                    color = ColorTextPrimary
-                )
+                Column {
+                    Text(
+                        text = name,
+                        fontSize = 15.sp,
+                        fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Medium,
+                        color = ColorTextPrimary
+                    )
+                    if (subtitle != null) {
+                        Spacer(modifier = Modifier.height(2.dp))
+                        Text(
+                            text = subtitle,
+                            fontSize = 12.sp,
+                            color = ColorTextSecondary
+                        )
+                    }
+                }
             }
         }
     }

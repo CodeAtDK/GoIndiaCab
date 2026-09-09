@@ -155,6 +155,9 @@ data class PaymentMilestone(
  * Supported payment method types for Screen 32.
  */
 enum class PaymentMethodType {
+    UPI,
+    NETBANKING,
+    CARDS,
     GOOGLE_PAY,
     PHONE_PE,
     PAYTM,

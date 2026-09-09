@@ -345,8 +345,8 @@ fun LoginScreen(
                         )
 
                         SocialButton(
-                            icon = painterResource(Res.drawable.ic_social_mail),
-                            text = "Email",
+                            icon = painterResource(Res.drawable.ic_social_apple),
+                            text = "Apple",
                             onClick = {},
                             modifier = Modifier.weight(1f),
                             height = 48.dp,

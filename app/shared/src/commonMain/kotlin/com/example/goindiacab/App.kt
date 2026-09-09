@@ -42,6 +42,7 @@ import kotlinx.coroutines.launch
 import com.example.goindiacab.components.PlatformBackHandler
 import com.example.goindiacab.components.rememberAppExiter
 import com.example.goindiacab.components.rememberPlatformToast
+import com.example.goindiacab.viewmodel.SavedPlaceItem
 
 enum class AppScreen(val displayName: String) {
     SPLASH("1. Splash Screen"),
@@ -75,7 +76,7 @@ enum class AppScreen(val displayName: String) {
     PARTNER_ASSIGNED("Partner Assigned"),
     REFUND_INITIATED("Refund Initiated"),
     TRIP_PAYMENT_SCHEDULE("Trip Payment Schedule"),
-    PAYMENT_OTP_VERIFICATION("Trip Start Payment (40%)"),
+    PAYMENT_OTP_VERIFICATION("Verify Payment (OTP)"),
     PROFILE("Profile"),
     EDIT_PROFILE("Edit Profile"),
     CUSTOMER_SUPPORT("Help & Support"),
@@ -87,7 +88,10 @@ enum class AppScreen(val displayName: String) {
     PRIVACY_POLICY("Privacy Policy"),
     MY_REVIEWS("My Reviews"),
     NOTIFICATIONS("Notifications"),
-    PAYMENT_REMINDER("Payment Reminder")
+    PAYMENT_REMINDER("Payment Reminder"),
+    MY_TRIPS("My Trips"),
+    ADD_NEW_ADDRESS("Add New Address"),
+    ONGOING_TRIP("Ongoing Round Trip")
 }
 
 @Composable
@@ -100,6 +104,7 @@ fun App() {
         val outstationRouteViewModel = remember { com.example.goindiacab.di.AppContainer.createOutstationRouteViewModel() }
         val multiStopRouteViewModel = remember { com.example.goindiacab.di.AppContainer.createMultiStopRouteViewModel() }
         val vehicleSelectionViewModel = remember { com.example.goindiacab.di.AppContainer.createVehicleSelectionViewModel() }
+        val savedPlacesViewModel = remember { com.example.goindiacab.di.AppContainer.createSavedPlacesViewModel() }
 
         val screenBackStack = remember { mutableStateListOf(AppScreen.SPLASH) }
         val currentScreen = screenBackStack.lastOrNull() ?: AppScreen.HOME
@@ -107,6 +112,7 @@ fun App() {
         var enteredPhoneNumber by remember { mutableStateOf("+91 98765 43210") }
         var showScreenPicker by remember { mutableStateOf(false) }
         var selectedLocationItem by remember { mutableStateOf<com.example.goindiacab.data.models.LocationItem?>(null) }
+        var isAddingStop by remember { mutableStateOf(false) }
 
         var offsetX by remember { mutableStateOf(0f) }
         var offsetY by remember { mutableStateOf(0f) }
@@ -143,7 +149,10 @@ fun App() {
             AppScreen.REFUND_INITIATED,
             AppScreen.TRIP_PAYMENT_SCHEDULE,
             AppScreen.PAYMENT_OTP_VERIFICATION,
-            AppScreen.BOOKING_ID_CONFIRMATION
+            AppScreen.BOOKING_ID_CONFIRMATION,
+            AppScreen.MY_TRIPS,
+            AppScreen.ADD_NEW_ADDRESS,
+            AppScreen.ONGOING_TRIP
         )
 
         /**
@@ -322,7 +331,7 @@ fun App() {
                     popBackTo(AppScreen.CAB_DETAIL)
                 }
                 AppScreen.BOOKING_SUMMARY -> {
-                    popBackTo(AppScreen.CAB_DETAIL)
+                    popBackTo(AppScreen.FARE_DETAILS)
                 }
                 AppScreen.APPLY_COUPON -> {
                     popBackTo(AppScreen.BOOKING_SUMMARY)
@@ -377,7 +386,10 @@ fun App() {
                 AppScreen.PRIVACY_POLICY,
                 AppScreen.MY_REVIEWS,
                 AppScreen.NOTIFICATIONS,
-                AppScreen.PAYMENT_REMINDER -> {
+                AppScreen.PAYMENT_REMINDER,
+                AppScreen.MY_TRIPS,
+                AppScreen.ADD_NEW_ADDRESS,
+                AppScreen.ONGOING_TRIP -> {
                     popBackStack()
                 }
             }
@@ -584,7 +596,9 @@ fun App() {
                             onAboutClick = { navigateTo(AppScreen.ABOUT) },
                             onPrivacyPolicyClick = { navigateTo(AppScreen.PRIVACY_POLICY) },
                             onNotificationsClick = { navigateTo(AppScreen.NOTIFICATIONS) },
-                            onMyReviewsClick = { navigateTo(AppScreen.MY_REVIEWS) }
+                            onMyReviewsClick = { navigateTo(AppScreen.MY_REVIEWS) },
+                            onMyTripsClick = { navigateTo(AppScreen.MY_TRIPS) },
+                            onOngoingTripClick = { navigateTo(AppScreen.ONGOING_TRIP) }
                         )
                     }
                     // -------------------------------------------------------------
@@ -637,24 +651,32 @@ fun App() {
                         )
                     }
                     AppScreen.SEARCH_DESTINATION -> {
-                        // Search Destination: provides live search, recent lookups, and popular getaways.
-                        // Arrived from CITY_ROUTE_SELECTION when passenger taps "TO CITY".
-                        // Back navigation returns cleanly to CITY_ROUTE_SELECTION.
+                        // Search Destination / Add Stop: provides live search, recent lookups, and popular getaways.
                         SearchDestinationScreen(
-                            onBackClick = { handleScreenBack() },
+                            title = if (isAddingStop) "Add Stop" else "Search Destination",
+                            onBackClick = {
+                                isAddingStop = false
+                                handleScreenBack()
+                            },
                             onDestinationSelected = { dest ->
-                                val fromCity = outstationRouteViewModel.uiState.value.fromCity.ifBlank {
-                                    homeViewModel.uiState.value.pickupLocation.ifBlank { "Current Location" }
-                                }
-                                homeViewModel.updateDropLocation(dest)
-                                outstationRouteViewModel.selectCity(dest)
-                                outstationRouteViewModel.setFromCity(fromCity)
+                                if (isAddingStop) {
+                                    isAddingStop = false
+                                    multiStopRouteViewModel.addStop(dest, "Rajasthan")
+                                    popBackTo(AppScreen.ROUTE_CONFIRMATION)
+                                } else {
+                                    val fromCity = outstationRouteViewModel.uiState.value.fromCity.ifBlank {
+                                        homeViewModel.uiState.value.pickupLocation.ifBlank { "Current Location" }
+                                    }
+                                    homeViewModel.updateDropLocation(dest)
+                                    outstationRouteViewModel.selectCity(dest)
+                                    outstationRouteViewModel.setFromCity(fromCity)
 
-                                multiStopRouteViewModel.setRoute(fromCity, dest)
-                                scheduleRideViewModel.setLocations(fromCity, dest)
-                                bookingFlowViewModel.updateRouteDetails(fromCity, dest)
-                                vehicleSelectionViewModel.updateRoute(origin = fromCity, destination = dest)
-                                navigateTo(AppScreen.ROUTE_CONFIRMATION)
+                                    multiStopRouteViewModel.setRoute(fromCity, dest)
+                                    scheduleRideViewModel.setLocations(fromCity, dest)
+                                    bookingFlowViewModel.updateRouteDetails(fromCity, dest)
+                                    vehicleSelectionViewModel.updateRoute(origin = fromCity, destination = dest)
+                                    navigateTo(AppScreen.ROUTE_CONFIRMATION)
+                                }
                             }
                         )
                     }
@@ -664,11 +686,19 @@ fun App() {
                     // -------------------------------------------------------------
                     AppScreen.ROUTE_CONFIRMATION -> {
                         // Plan Your Route screen: timeline waypoint stops, distance/duration metrics,
-                        // and add-stop capabilities.
+                        // and add-stop capabilities without popup dialog.
                         MultiStopRouteConfirmationScreen(
                             viewModel = multiStopRouteViewModel,
-                            onBackClick = { handleScreenBack() },
+                            onBackClick = {
+                                isAddingStop = false
+                                handleScreenBack()
+                            },
+                            onAddStopClick = {
+                                isAddingStop = true
+                                navigateTo(AppScreen.SEARCH_DESTINATION)
+                            },
                             onChangeDestinationClick = {
+                                isAddingStop = false
                                 if (screenBackStack.contains(AppScreen.SEARCH_DESTINATION)) {
                                     popBackTo(AppScreen.SEARCH_DESTINATION)
                                 } else {
@@ -762,7 +792,7 @@ fun App() {
                             viewModel = bookingFlowViewModel,
                             onBackClick = { handleScreenBack() },
                             onBookNowClick = { detail ->
-                                navigateTo(AppScreen.BOOKING_SUMMARY)
+                                navigateTo(AppScreen.FARE_DETAILS)
                             },
                             onViewFareDetailsClick = {
                                 navigateTo(AppScreen.FARE_DETAILS)
@@ -787,10 +817,11 @@ fun App() {
                         )
                     }
                     AppScreen.APPLY_COUPON -> {
-                        // Promo code validation and discount application modal sheet
+                        // Promo code validation and discount application modal sheet; returns directly to Booking Summary
                         ApplyCouponScreen(
                             viewModel = bookingFlowViewModel,
-                            onBackClick = { handleScreenBack() }
+                            onBackClick = { handleScreenBack() },
+                            onCouponApplied = { popBackTo(AppScreen.BOOKING_SUMMARY) }
                         )
                     }
                     AppScreen.PAYMENT_SCREEN -> {
@@ -884,10 +915,10 @@ fun App() {
                         )
                     }
                     AppScreen.PAYMENT_OTP_VERIFICATION -> {
-                        // Pay 40% Trip Start Milestone & UPI confirmation (trip-start-payment.svg)
-                        TripStartPaymentScreen(
+                        // Verify Payment & Partner OTP Authentication matching payment-otp-verification.svg, screen-1.svg, and screen-2.svg
+                        PaymentOtpVerificationScreen(
                             viewModel = bookingFlowViewModel,
-                            onPaymentConfirmed = {
+                            onPaymentVerified = {
                                 toast("✓ Milestone Payment Verified Successfully!")
                                 navigateTo(AppScreen.BOOKING_ID_CONFIRMATION)
                             },
@@ -925,7 +956,7 @@ fun App() {
                             onHelpSupportClick = { navigateTo(AppScreen.CUSTOMER_SUPPORT) },
                             onLogoutClick = { navigateTo(AppScreen.LOGIN, clearStack = true) },
                             onHomeTabClick = { navigateTo(AppScreen.HOME, clearStack = true) },
-                            onTripsTabClick = { navigateTo(AppScreen.HOME) },
+                            onTripsTabClick = { navigateTo(AppScreen.MY_TRIPS) },
                             onOffersTabClick = { navigateTo(AppScreen.HOME) }
                         )
                     }
@@ -976,12 +1007,44 @@ fun App() {
                     }
                     AppScreen.SAVED_PLACES -> {
                         SavedPlacesScreen(
-                            viewModel = com.example.goindiacab.di.AppContainer.createSavedPlacesViewModel(),
+                            viewModel = savedPlacesViewModel,
                             onBackClick = { handleScreenBack() },
+                            onAddNewAddressClick = { navigateTo(AppScreen.ADD_NEW_ADDRESS) },
                             onSelectPlace = { place ->
                                 toast("Selected: ${place.title}")
                                 handleScreenBack()
                             }
+                        )
+                    }
+                    AppScreen.ADD_NEW_ADDRESS -> {
+                        AddNewAddressScreen(
+                            viewModel = savedPlacesViewModel,
+                            onBackClick = { handleScreenBack() },
+                            onAddressSaved = { place ->
+                                toast("✓ Address saved: ${place.title}")
+                                popBackTo(AppScreen.SAVED_PLACES)
+                            }
+                        )
+                    }
+                    AppScreen.MY_TRIPS -> {
+                        MyTripsScreen(
+                            onBackClick = { handleScreenBack() },
+                            onTripClick = { trip ->
+                                toast("Trip ${trip.id}: ${trip.origin} ➔ ${trip.destination}")
+                            },
+                            onOngoingTripClick = { trip ->
+                                navigateTo(AppScreen.ONGOING_TRIP)
+                            },
+                            onHomeClick = { popBackTo(AppScreen.HOME) },
+                            onOffersClick = { /* offers */ },
+                            onProfileClick = { navigateTo(AppScreen.PROFILE) }
+                        )
+                    }
+                    AppScreen.ONGOING_TRIP -> {
+                        OngoingTripScreen(
+                            onBackClick = { handleScreenBack() },
+                            onTrackOnMapClick = { toast("Live GPS Tracking enabled") },
+                            onContactDriverClick = { toast("Calling driver Rajesh Kumar (+91 98765 43210)") }
                         )
                     }
                     AppScreen.ABOUT -> {

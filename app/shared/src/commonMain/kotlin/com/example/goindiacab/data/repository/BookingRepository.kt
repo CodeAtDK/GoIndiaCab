@@ -435,6 +435,9 @@ class BookingRepositoryImpl : BookingRepository {
             1800
         }
         val methodName = when (session.selectedPaymentMethod) {
+            PaymentMethodType.UPI -> "UPI"
+            PaymentMethodType.NETBANKING -> "Netbanking"
+            PaymentMethodType.CARDS -> "Credit / Debit Cards"
             PaymentMethodType.GOOGLE_PAY -> "Google Pay"
             PaymentMethodType.PHONE_PE -> "PhonePe"
             PaymentMethodType.PAYTM -> "Paytm"

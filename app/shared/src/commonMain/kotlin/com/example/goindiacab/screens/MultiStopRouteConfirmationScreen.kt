@@ -53,19 +53,11 @@ fun MultiStopRouteConfirmationScreen(
     viewModel: MultiStopRouteViewModel = remember { AppContainer.createMultiStopRouteViewModel() },
     onBackClick: () -> Unit,
     onContinueClick: () -> Unit,
+    onAddStopClick: () -> Unit = {},
     onChangeDestinationClick: () -> Unit = onBackClick
 ) {
     val uiState by viewModel.uiState.collectAsState()
     val routeData = uiState.routeData
-
-    var showAddStopDialog by remember { mutableStateOf(false) }
-    var newStopName by remember { mutableStateOf("") }
-    var newStopLocation by remember { mutableStateOf("") }
-
-    // Intercept back button only to dismiss dialog if open, else let central handler navigate back
-    PlatformBackHandler(enabled = showAddStopDialog) {
-        showAddStopDialog = false
-    }
 
     AdaptiveContainer {
         Scaffold(
@@ -198,7 +190,7 @@ fun MultiStopRouteConfirmationScreen(
                                 verticalAlignment = Alignment.CenterVertically
                             ) {
                                 Surface(
-                                    onClick = { showAddStopDialog = true },
+                                    onClick = onAddStopClick,
                                     shape = RoundedCornerShape(8.dp),
                                     color = SurfaceGray,
                                     modifier = Modifier.height(36.dp)
@@ -279,7 +271,7 @@ fun MultiStopRouteConfirmationScreen(
                                     )
                                     Spacer(modifier = Modifier.height(4.dp))
                                     Text(
-                                        text = routeData.estDurationText,
+                                        text = routeData.estDurationText.ifBlank { "~10 Hours" },
                                         fontSize = 18.sp,
                                         fontWeight = FontWeight.ExtraBold,
                                         fontFamily = outfitFontFamily(),
@@ -290,52 +282,6 @@ fun MultiStopRouteConfirmationScreen(
                         }
                     }
                 }
-            }
-
-            // Dialog for adding an intermediate stop
-            if (showAddStopDialog) {
-                AlertDialog(
-                    onDismissRequest = { showAddStopDialog = false },
-                    title = {
-                        Text("Add Route Stop", fontFamily = outfitFontFamily(), fontWeight = FontWeight.Bold)
-                    },
-                    text = {
-                        Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
-                            OutlinedTextField(
-                                value = newStopName,
-                                onValueChange = { newStopName = it },
-                                label = { Text("Stop Name (e.g. Neemrana Fort)") },
-                                singleLine = true
-                            )
-                            OutlinedTextField(
-                                value = newStopLocation,
-                                onValueChange = { newStopLocation = it },
-                                label = { Text("Location / State (e.g. Rajasthan)") },
-                                singleLine = true
-                            )
-                        }
-                    },
-                    confirmButton = {
-                        Button(
-                            onClick = {
-                                if (newStopName.isNotBlank()) {
-                                    viewModel.addStop(newStopName, newStopLocation.ifBlank { "India" })
-                                    newStopName = ""
-                                    newStopLocation = ""
-                                    showAddStopDialog = false
-                                }
-                            },
-                            colors = ButtonDefaults.buttonColors(containerColor = BrandOrange)
-                        ) {
-                            Text("Add")
-                        }
-                    },
-                    dismissButton = {
-                        TextButton(onClick = { showAddStopDialog = false }) {
-                            Text("Cancel")
-                        }
-                    }
-                )
             }
         }
     }

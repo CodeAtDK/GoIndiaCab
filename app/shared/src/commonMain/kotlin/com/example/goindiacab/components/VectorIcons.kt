@@ -227,7 +227,8 @@ fun BellIcon(
 fun StarIcon(
     modifier: Modifier = Modifier,
     size: Dp = 20.dp,
-    color: Color = Color(0xFF0A1A3A)
+    color: Color = Color(0xFF0A1A3A),
+    isFilled: Boolean = true
 ) {
     Canvas(modifier = modifier.size(size)) {
         val w = this.size.width
@@ -248,7 +249,7 @@ fun StarIcon(
         drawPath(
             path = path,
             color = color,
-            style = Stroke(width = 1.8.dp.toPx(), cap = StrokeCap.Round, join = StrokeJoin.Round)
+            style = if (isFilled) Fill else Stroke(width = 1.8.dp.toPx(), cap = StrokeCap.Round, join = StrokeJoin.Round)
         )
     }
 }
