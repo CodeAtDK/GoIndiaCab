@@ -167,5 +167,19 @@ object AppContainer {
     fun createAboutViewModel(): com.example.goindiacab.viewmodel.AboutViewModel {
         return com.example.goindiacab.viewmodel.AboutViewModel()
     }
+
+    /**
+     * Factory for MyReviewsViewModel.
+     */
+    fun createMyReviewsViewModel(): com.example.goindiacab.viewmodel.MyReviewsViewModel {
+        return com.example.goindiacab.viewmodel.MyReviewsViewModel()
+    }
+
+    /**
+     * Factory for NotificationsViewModel.
+     */
+    fun createNotificationsViewModel(): com.example.goindiacab.viewmodel.NotificationsViewModel {
+        return com.example.goindiacab.viewmodel.NotificationsViewModel()
+    }
 }
 

@@ -79,7 +79,9 @@ enum class AppScreen(val displayName: String) {
     SETTINGS("Settings"),
     SAVED_PLACES("Saved Places"),
     ABOUT("About GoIndiaCab"),
-    PRIVACY_POLICY("Privacy Policy")
+    PRIVACY_POLICY("Privacy Policy"),
+    MY_REVIEWS("My Reviews"),
+    NOTIFICATIONS("Notifications")
 }
 
 @Composable
@@ -366,7 +368,9 @@ fun App() {
                 AppScreen.SETTINGS,
                 AppScreen.SAVED_PLACES,
                 AppScreen.ABOUT,
-                AppScreen.PRIVACY_POLICY -> {
+                AppScreen.PRIVACY_POLICY,
+                AppScreen.MY_REVIEWS,
+                AppScreen.NOTIFICATIONS -> {
                     popBackStack()
                 }
             }
@@ -557,7 +561,9 @@ fun App() {
                             onSavedPlacesClick = { navigateTo(AppScreen.SAVED_PLACES) },
                             onSettingsClick = { navigateTo(AppScreen.SETTINGS) },
                             onAboutClick = { navigateTo(AppScreen.ABOUT) },
-                            onPrivacyPolicyClick = { navigateTo(AppScreen.PRIVACY_POLICY) }
+                            onPrivacyPolicyClick = { navigateTo(AppScreen.PRIVACY_POLICY) },
+                            onNotificationsClick = { navigateTo(AppScreen.NOTIFICATIONS) },
+                            onMyReviewsClick = { navigateTo(AppScreen.MY_REVIEWS) }
                         )
                     }
                     // -------------------------------------------------------------
@@ -969,6 +975,21 @@ fun App() {
                         PrivacyPolicyScreen(
                             onBackClick = { handleScreenBack() },
                             onContactOfficerClick = { toast("Opening security@goindiacab.com") }
+                        )
+                    }
+                    AppScreen.MY_REVIEWS -> {
+                        MyReviewsScreen(
+                            viewModel = com.example.goindiacab.di.AppContainer.createMyReviewsViewModel(),
+                            onBackClick = { handleScreenBack() }
+                        )
+                    }
+                    AppScreen.NOTIFICATIONS -> {
+                        NotificationsScreen(
+                            viewModel = com.example.goindiacab.di.AppContainer.createNotificationsViewModel(),
+                            onBackClick = { handleScreenBack() },
+                            onNotificationClick = { notification ->
+                                toast(notification.title)
+                            }
                         )
                     }
                 }

@@ -72,7 +72,8 @@ fun HomeScreen(
     onSavedPlacesClick: () -> Unit = {},
     onSettingsClick: () -> Unit = {},
     onAboutClick: () -> Unit = {},
-    onPrivacyPolicyClick: () -> Unit = {}
+    onPrivacyPolicyClick: () -> Unit = {},
+    onMyReviewsClick: () -> Unit = {}
 ) {
     val uiState by viewModel.uiState.collectAsState()
     var activeTab by remember { mutableStateOf(HomeBottomTab.HOME) }
@@ -364,7 +365,8 @@ fun HomeScreen(
                     "About GoIndiaCab" -> onAboutClick()
                     "Privacy Policy" -> onPrivacyPolicyClick()
                     "Wallet" -> activeTab = HomeBottomTab.WALLET
-                    "Notifications" -> activeTab = HomeBottomTab.OFFERS
+                    "Notifications" -> onNotificationsClick()
+                    "My Reviews" -> onMyReviewsClick()
                     "Outstation Cabs", "One-Way Cabs", "Hourly Rentals" -> onOutstationClick()
                     else -> {}
                 }
