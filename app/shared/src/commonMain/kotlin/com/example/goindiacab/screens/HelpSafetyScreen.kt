@@ -39,6 +39,7 @@ fun HelpSafetyScreen(
     onBackClick: () -> Unit = {},
     onCallSosClick: () -> Unit = {},
     onReportIncidentClick: () -> Unit = {},
+    onManageEmergencyContactsClick: () -> Unit = {},
     modifier: Modifier = Modifier
 ) {
     PlatformBackHandler(enabled = true) {
@@ -266,6 +267,40 @@ fun HelpSafetyScreen(
                                 fontWeight = FontWeight.Bold,
                                 color = SafetyRed
                             )
+                        }
+                    }
+
+                    // Manage Trusted Contacts Button
+                    Surface(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .clip(RoundedCornerShape(10.dp))
+                            .clickable(onClick = onManageEmergencyContactsClick),
+                        color = Color.White,
+                        border = BorderStroke(1.dp, SafetyRed.copy(alpha = 0.5f)),
+                        shape = RoundedCornerShape(10.dp)
+                    ) {
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(horizontal = 14.dp, vertical = 10.dp),
+                            horizontalArrangement = Arrangement.SpaceBetween,
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Row(
+                                verticalAlignment = Alignment.CenterVertically,
+                                horizontalArrangement = Arrangement.spacedBy(8.dp)
+                            ) {
+                                Text(text = "🛡️", fontSize = 14.sp)
+                                Text(
+                                    text = "Manage Trusted Emergency Contacts",
+                                    fontSize = 13.sp,
+                                    fontWeight = FontWeight.Bold,
+                                    fontFamily = outfitFontFamily(),
+                                    color = SafetyRed
+                                )
+                            }
+                            ChevronRightIcon(size = 16.dp, color = SafetyRed)
                         }
                     }
                 }

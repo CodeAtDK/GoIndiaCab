@@ -182,7 +182,7 @@ jobs:
           cache-read-only: ${{ github.ref != 'refs/heads/main' }}
 
       - name: Build Desktop Application JAR
-        run: ./gradlew :app:desktopApp:jar --no-daemon
+        run: ./gradlew :app:desktopApp:jvmJar --no-daemon
 
       - name: Build Ktor Backend Server
         run: ./gradlew :server:build -x test --no-daemon

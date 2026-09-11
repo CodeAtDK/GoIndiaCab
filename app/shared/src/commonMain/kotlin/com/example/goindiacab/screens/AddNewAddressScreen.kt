@@ -154,7 +154,7 @@ fun AddNewAddressScreen(
                                 tag = selectedLabel.label
                             )
                             val newItem = SavedPlaceItem(
-                                id = "addr_${System.currentTimeMillis()}",
+                                id = "addr_${kotlin.random.Random.nextInt(100000, 999999)}",
                                 title = selectedLabel.label,
                                 address = constructedAddress,
                                 tag = selectedLabel.label

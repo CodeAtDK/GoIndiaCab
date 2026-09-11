@@ -42,6 +42,7 @@ fun TripDetailsScreen(
     onContactDriverClick: () -> Unit = {},
     onRateTripClick: () -> Unit = {},
     onBookAgainClick: () -> Unit = {},
+    onDownloadInvoiceClick: (MyTripItem) -> Unit = {},
     modifier: Modifier = Modifier
 ) {
     PlatformBackHandler(enabled = true) {
@@ -111,10 +112,10 @@ fun TripDetailsScreen(
                         )
                     }
 
-                    IconButton(onClick = { toast("Downloading Trip Invoice PDF...") }) {
+                    IconButton(onClick = { onDownloadInvoiceClick(trip) }) {
                         Icon(
-                            painter = painterResource(Res.drawable.ic_headset),
-                            contentDescription = "Support",
+                            painter = painterResource(Res.drawable.ic_wallet_card),
+                            contentDescription = "Invoice",
                             tint = Color.White,
                             modifier = Modifier.size(20.dp)
                         )
@@ -142,7 +143,7 @@ fun TripDetailsScreen(
                                 horizontalArrangement = Arrangement.spacedBy(10.dp)
                             ) {
                                 OutlinedButton(
-                                    onClick = { showCancelDialog = true },
+                                    onClick = { onCancelBookingClick(trip) },
                                     modifier = Modifier
                                         .weight(0.9f)
                                         .height(50.dp),

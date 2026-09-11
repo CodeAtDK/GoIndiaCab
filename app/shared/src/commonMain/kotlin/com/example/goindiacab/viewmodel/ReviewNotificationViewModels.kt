@@ -71,7 +71,7 @@ class MyReviewsViewModel : ViewModel() {
 
     fun addReview(driverName: String, vehicleInfo: String, initials: String, rating: Int, text: String) {
         val newReview = ReviewItem(
-            id = (System.currentTimeMillis() % 10000).toString(),
+            id = kotlin.random.Random.nextInt(1000, 9999).toString(),
             driverName = driverName,
             vehicleInfo = vehicleInfo,
             initials = initials,

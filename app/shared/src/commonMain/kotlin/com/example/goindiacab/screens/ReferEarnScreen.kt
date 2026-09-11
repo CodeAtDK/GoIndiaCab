@@ -48,7 +48,9 @@ fun ReferEarnScreen(
     viewModel: ReferEarnViewModel = remember { AppContainer.createReferEarnViewModel() },
     onBackClick: () -> Unit = {},
     onWhatsAppShareClick: (String) -> Unit = {},
-    onSmsShareClick: (String) -> Unit = {}
+    onSmsShareClick: (String) -> Unit = {},
+    onEnterReferralCodeClick: () -> Unit = {},
+    onViewWalletClick: () -> Unit = {}
 ) {
     val uiState by viewModel.uiState.collectAsState()
     val clipboardManager = LocalClipboardManager.current
@@ -371,6 +373,110 @@ fun ReferEarnScreen(
                         fontFamily = outfitFontFamily(),
                         color = ReferEarnOrange
                     )
+                }
+            }
+
+            // Enter Referral Code Entry Point
+            Surface(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .clip(RoundedCornerShape(14.dp))
+                    .clickable(onClick = onEnterReferralCodeClick),
+                shape = RoundedCornerShape(14.dp),
+                color = Color.White,
+                shadowElevation = 1.dp
+            ) {
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 16.dp, vertical = 14.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(12.dp)
+                    ) {
+                        Box(
+                            modifier = Modifier
+                                .size(36.dp)
+                                .clip(CircleShape)
+                                .background(ReferEarnHeroIconBg),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Text(text = "🎁", fontSize = 16.sp)
+                        }
+
+                        Column {
+                            Text(
+                                text = "Have a Friend's Referral Code?",
+                                fontSize = 14.sp,
+                                fontWeight = FontWeight.Bold,
+                                fontFamily = outfitFontFamily(),
+                                color = ReferEarnTextDark
+                            )
+                            Text(
+                                text = "Enter code to claim ₹250 signup bonus",
+                                fontSize = 12.sp,
+                                fontFamily = dmSansFontFamily(),
+                                color = ReferEarnTextSub
+                            )
+                        }
+                    }
+
+                    ChevronRightIcon(size = 18.dp, color = ReferEarnOrange)
+                }
+            }
+
+            // Wallet Shortcut
+            Surface(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .clip(RoundedCornerShape(14.dp))
+                    .clickable(onClick = onViewWalletClick),
+                shape = RoundedCornerShape(14.dp),
+                color = Color.White,
+                shadowElevation = 1.dp
+            ) {
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 16.dp, vertical = 14.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(12.dp)
+                    ) {
+                        Box(
+                            modifier = Modifier
+                                .size(36.dp)
+                                .clip(CircleShape)
+                                .background(Color(0xFFE6F0FF)),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Text(text = "💳", fontSize = 16.sp)
+                        }
+
+                        Column {
+                            Text(
+                                text = "GoIndiaCab Wallet & Earnings",
+                                fontSize = 14.sp,
+                                fontWeight = FontWeight.Bold,
+                                fontFamily = outfitFontFamily(),
+                                color = ReferEarnTextDark
+                            )
+                            Text(
+                                text = "View balance, redeem rewards & top-up",
+                                fontSize = 12.sp,
+                                fontFamily = dmSansFontFamily(),
+                                color = ReferEarnTextSub
+                            )
+                        }
+                    }
+
+                    ChevronRightIcon(size = 18.dp, color = Color(0xFF0052CC))
                 }
             }
 

@@ -102,7 +102,14 @@ enum class AppScreen(val displayName: String) {
     HELP_TRIP_ISSUES("Trip Issues & Lost Items"),
     HELP_PAYMENTS("Payments & Refunds Help"),
     HELP_RAISE_TICKET("Raise Support Ticket"),
-    HELP_TICKET_HISTORY("Support Tickets")
+    HELP_TICKET_HISTORY("Support Tickets"),
+    ENTER_REFERRAL_CODE("Enter Referral Code"),
+    COMPLETE_PROFILE("Complete Profile"),
+    WALLET("GoIndiaCab Wallet"),
+    CANCEL_BOOKING("Cancel Booking"),
+    TERMS_OF_SERVICE("Terms of Service"),
+    EMERGENCY_CONTACTS("Emergency Contacts"),
+    TRIP_INVOICE("GST Tax Invoice")
 }
 
 @Composable
@@ -456,6 +463,61 @@ fun App() {
                         popBackStack()
                     }
                 }
+                AppScreen.ENTER_REFERRAL_CODE -> {
+                    if (screenBackStack.contains(AppScreen.REFER_EARN)) {
+                        popBackTo(AppScreen.REFER_EARN)
+                    } else if (screenBackStack.contains(AppScreen.LOGIN)) {
+                        popBackTo(AppScreen.LOGIN)
+                    } else {
+                        popBackStack()
+                    }
+                }
+                AppScreen.COMPLETE_PROFILE -> {
+                    popBackTo(AppScreen.LOGIN)
+                }
+                AppScreen.WALLET -> {
+                    if (screenBackStack.contains(AppScreen.REFER_EARN)) {
+                        popBackTo(AppScreen.REFER_EARN)
+                    } else if (screenBackStack.contains(AppScreen.PROFILE)) {
+                        popBackTo(AppScreen.PROFILE)
+                    } else {
+                        popBackTo(AppScreen.HOME)
+                    }
+                }
+                AppScreen.CANCEL_BOOKING -> {
+                    if (screenBackStack.contains(AppScreen.TRIP_DETAILS)) {
+                        popBackTo(AppScreen.TRIP_DETAILS)
+                    } else {
+                        popBackStack()
+                    }
+                }
+                AppScreen.TERMS_OF_SERVICE -> {
+                    if (screenBackStack.contains(AppScreen.ABOUT)) {
+                        popBackTo(AppScreen.ABOUT)
+                    } else if (screenBackStack.contains(AppScreen.LOGIN)) {
+                        popBackTo(AppScreen.LOGIN)
+                    } else {
+                        popBackStack()
+                    }
+                }
+                AppScreen.EMERGENCY_CONTACTS -> {
+                    if (screenBackStack.contains(AppScreen.HELP_SAFETY)) {
+                        popBackTo(AppScreen.HELP_SAFETY)
+                    } else if (screenBackStack.contains(AppScreen.PROFILE)) {
+                        popBackTo(AppScreen.PROFILE)
+                    } else {
+                        popBackTo(AppScreen.HOME)
+                    }
+                }
+                AppScreen.TRIP_INVOICE -> {
+                    if (screenBackStack.contains(AppScreen.BOOKING_ID_CONFIRMATION)) {
+                        popBackTo(AppScreen.BOOKING_ID_CONFIRMATION)
+                    } else if (screenBackStack.contains(AppScreen.TRIP_DETAILS)) {
+                        popBackTo(AppScreen.TRIP_DETAILS)
+                    } else {
+                        popBackStack()
+                    }
+                }
             }
         }
 
@@ -523,7 +585,8 @@ fun App() {
                                 }
                                 navigateTo(AppScreen.OTP_NORMAL)
                             },
-                            onSkipClick = { navigateTo(AppScreen.LOCATION_PERMISSION) }
+                            onSkipClick = { navigateTo(AppScreen.LOCATION_PERMISSION) },
+                            onTermsClick = { navigateTo(AppScreen.TERMS_OF_SERVICE) }
                         )
                     }
                     AppScreen.OTP_NORMAL -> {
@@ -532,7 +595,7 @@ fun App() {
                             phoneNumber = enteredPhoneNumber,
                             initialMode = OtpScreenMode.NORMAL,
                             onBackClick = { handleScreenBack() },
-                            onVerifySuccess = { navigateTo(AppScreen.LOCATION_PERMISSION) },
+                            onVerifySuccess = { navigateTo(AppScreen.COMPLETE_PROFILE) },
                             onEditPhoneClick = { handleScreenBack() }
                         )
                     }
@@ -542,7 +605,7 @@ fun App() {
                             phoneNumber = enteredPhoneNumber,
                             initialMode = OtpScreenMode.EXPIRED,
                             onBackClick = { handleScreenBack() },
-                            onVerifySuccess = { navigateTo(AppScreen.LOCATION_PERMISSION) },
+                            onVerifySuccess = { navigateTo(AppScreen.COMPLETE_PROFILE) },
                             onEditPhoneClick = { handleScreenBack() }
                         )
                     }
@@ -552,7 +615,7 @@ fun App() {
                             phoneNumber = enteredPhoneNumber,
                             initialMode = OtpScreenMode.ERROR,
                             onBackClick = { handleScreenBack() },
-                            onVerifySuccess = { navigateTo(AppScreen.LOCATION_PERMISSION) },
+                            onVerifySuccess = { navigateTo(AppScreen.COMPLETE_PROFILE) },
                             onEditPhoneClick = { handleScreenBack() }
                         )
                     }
@@ -662,7 +725,10 @@ fun App() {
                             onNotificationsClick = { navigateTo(AppScreen.NOTIFICATIONS) },
                             onMyReviewsClick = { navigateTo(AppScreen.MY_REVIEWS) },
                             onMyTripsClick = { navigateTo(AppScreen.MY_TRIPS) },
-                            onOngoingTripClick = { navigateTo(AppScreen.ONGOING_TRIP) }
+                            onOngoingTripClick = { navigateTo(AppScreen.ONGOING_TRIP) },
+                            onWalletClick = { navigateTo(AppScreen.WALLET) },
+                            onEmergencyContactsClick = { navigateTo(AppScreen.EMERGENCY_CONTACTS) },
+                            onTermsClick = { navigateTo(AppScreen.TERMS_OF_SERVICE) }
                         )
                     }
                     // -------------------------------------------------------------
@@ -1010,6 +1076,9 @@ fun App() {
                             onBackToHomeClick = { navigateTo(AppScreen.HOME, clearStack = true) },
                             onTrackRideClick = {
                                 navigateTo(AppScreen.ONGOING_TRIP)
+                            },
+                            onDownloadInvoiceClick = {
+                                navigateTo(AppScreen.TRIP_INVOICE)
                             }
                         )
                     }
@@ -1034,7 +1103,9 @@ fun App() {
                             onLogoutClick = { navigateTo(AppScreen.LOGIN, clearStack = true) },
                             onHomeTabClick = { navigateTo(AppScreen.HOME, clearStack = true) },
                             onTripsTabClick = { navigateTo(AppScreen.MY_TRIPS) },
-                            onOffersTabClick = { navigateTo(AppScreen.APPLY_COUPON) }
+                            onOffersTabClick = { navigateTo(AppScreen.APPLY_COUPON) },
+                            onWalletClick = { navigateTo(AppScreen.WALLET) },
+                            onEmergencyContactsClick = { navigateTo(AppScreen.EMERGENCY_CONTACTS) }
                         )
                     }
                     AppScreen.EDIT_PROFILE -> {
@@ -1070,6 +1141,9 @@ fun App() {
                             onReportIncidentClick = {
                                 initialSupportCategory = "Safety Issue"
                                 navigateTo(AppScreen.HELP_RAISE_TICKET)
+                            },
+                            onManageEmergencyContactsClick = {
+                                navigateTo(AppScreen.EMERGENCY_CONTACTS)
                             }
                         )
                     }
@@ -1089,7 +1163,9 @@ fun App() {
                                 initialSupportCategory = "Payment & Refund"
                                 navigateTo(AppScreen.HELP_RAISE_TICKET)
                             },
-                            onDownloadInvoiceClick = { toast("Downloading GST Tax Invoice PDF...") }
+                            onDownloadInvoiceClick = {
+                                navigateTo(AppScreen.TRIP_INVOICE)
+                            }
                         )
                     }
                     AppScreen.HELP_RAISE_TICKET -> {
@@ -1128,6 +1204,12 @@ fun App() {
                             },
                             onSmsShareClick = { msg ->
                                 toast("Opening SMS to invite friend...")
+                            },
+                            onEnterReferralCodeClick = {
+                                navigateTo(AppScreen.ENTER_REFERRAL_CODE)
+                            },
+                            onViewWalletClick = {
+                                navigateTo(AppScreen.WALLET)
                             }
                         )
                     }
@@ -1210,12 +1292,16 @@ fun App() {
                                 },
                                 onCancelBookingClick = { cancelledTrip ->
                                     selectedTripItem = cancelledTrip
-                                    navigateTo(AppScreen.REFUND_INITIATED)
+                                    navigateTo(AppScreen.CANCEL_BOOKING)
                                 },
                                 onTrackLiveClick = { navigateTo(AppScreen.ONGOING_TRIP) },
                                 onContactDriverClick = { toast("Calling driver Rajesh Kumar (+91 98765 43210)") },
                                 onRateTripClick = { navigateTo(AppScreen.RATE_US) },
-                                onBookAgainClick = { navigateTo(AppScreen.CITY_ROUTE_SELECTION) }
+                                onBookAgainClick = { navigateTo(AppScreen.CITY_ROUTE_SELECTION) },
+                                onDownloadInvoiceClick = { invoiceTrip ->
+                                    selectedTripItem = invoiceTrip
+                                    navigateTo(AppScreen.TRIP_INVOICE)
+                                }
                             )
                         } ?: run {
                             LaunchedEffect(Unit) { popBackTo(AppScreen.MY_TRIPS) }
@@ -1255,7 +1341,7 @@ fun App() {
                             viewModel = com.example.goindiacab.di.AppContainer.createAboutViewModel(),
                             onBackClick = { handleScreenBack() },
                             onPrivacyPolicyClick = { navigateTo(AppScreen.PRIVACY_POLICY) },
-                            onTermsClick = { toast("Terms & Conditions") }
+                            onTermsClick = { navigateTo(AppScreen.TERMS_OF_SERVICE) }
                         )
                     }
                     AppScreen.PRIVACY_POLICY -> {
@@ -1303,6 +1389,80 @@ fun App() {
                                 handleScreenBack()
                             },
                             onBackClick = { handleScreenBack() }
+                        )
+                    }
+                    AppScreen.ENTER_REFERRAL_CODE -> {
+                        EnterReferralCodeScreen(
+                            onBackClick = { handleScreenBack() },
+                            onCodeAppliedSuccess = { code, discount ->
+                                toast("✓ Referral code $code applied! ₹$discount discount added.")
+                                popBackTo(AppScreen.HOME)
+                            },
+                            onSkipClick = { handleScreenBack() }
+                        )
+                    }
+                    AppScreen.COMPLETE_PROFILE -> {
+                        CompleteProfileScreen(
+                            phoneNumber = enteredPhoneNumber,
+                            onBackClick = { handleScreenBack() },
+                            onProfileCompleted = { name, email, city, refCode ->
+                                toast("✓ Welcome to GoIndiaCab, $name!")
+                                navigateTo(AppScreen.LOCATION_PERMISSION)
+                            },
+                            onSkipClick = {
+                                navigateTo(AppScreen.LOCATION_PERMISSION)
+                            }
+                        )
+                    }
+                    AppScreen.WALLET -> {
+                        WalletScreen(
+                            onBackClick = { handleScreenBack() },
+                            onReferralRedeemClick = {
+                                toast("✓ Referral reward points credited to your wallet balance!")
+                            }
+                        )
+                    }
+                    AppScreen.CANCEL_BOOKING -> {
+                        CancelBookingScreen(
+                            bookingId = selectedTripItem?.id ?: "GIC-849201",
+                            origin = selectedTripItem?.origin ?: "New Delhi Railway Station",
+                            destination = selectedTripItem?.destination ?: "Taj Mahal, Agra",
+                            travelDate = selectedTripItem?.dateTimeText ?: "20 Sep 2026",
+                            advancePaidAmount = 520,
+                            onBackClick = { handleScreenBack() },
+                            onConfirmCancellation = { reason ->
+                                toast("✓ Booking cancelled: $reason")
+                                navigateTo(AppScreen.REFUND_INITIATED)
+                            }
+                        )
+                    }
+                    AppScreen.TERMS_OF_SERVICE -> {
+                        TermsOfServiceScreen(
+                            onBackClick = { handleScreenBack() },
+                            onContactLegalClick = {
+                                toast("Opening email to legal@goindiacab.com")
+                            }
+                        )
+                    }
+                    AppScreen.EMERGENCY_CONTACTS -> {
+                        EmergencyContactsScreen(
+                            onBackClick = { handleScreenBack() }
+                        )
+                    }
+                    AppScreen.TRIP_INVOICE -> {
+                        TripInvoiceScreen(
+                            bookingId = selectedTripItem?.id ?: "GIC-849201",
+                            origin = selectedTripItem?.origin ?: "New Delhi Railway Station",
+                            destination = selectedTripItem?.destination ?: "Taj Mahal, Agra",
+                            date = selectedTripItem?.dateTimeText ?: "20 Sep 2026",
+                            totalFare = selectedTripItem?.fareAmountText?.filter { it.isDigit() }?.toIntOrNull() ?: 2499,
+                            onBackClick = { handleScreenBack() },
+                            onShareInvoiceClick = {
+                                toast("Sharing GST Tax Invoice PDF...")
+                            },
+                            onDownloadPdfClick = {
+                                toast("✓ GST Tax Invoice downloaded to device!")
+                            }
                         )
                     }
                 }

@@ -38,7 +38,8 @@ import org.jetbrains.compose.resources.painterResource
 fun LoginScreen(
     onContinueClick: (phoneNumber: String) -> Unit = {},
     onSkipClick: () -> Unit = {},
-    onReferralClick: () -> Unit = {}
+    onReferralClick: () -> Unit = {},
+    onTermsClick: () -> Unit = {}
 ) {
     var phoneNumber by remember { mutableStateOf("") }
     val focusManager = LocalFocusManager.current
@@ -379,7 +380,7 @@ fun LoginScreen(
 
                     Spacer(modifier = Modifier.height(10.dp))
 
-                    // Terms & Policy (Left aligned)
+                    // Terms & Policy (Left aligned, clickable)
                     Text(
                         text = "By proceeding, you agree to GoIndiaCab's Privacy Policy, User Agreement, T&Cs",
                         fontSize = 11.sp,
@@ -390,6 +391,10 @@ fun LoginScreen(
                         textAlign = TextAlign.Start,
                         modifier = Modifier
                             .fillMaxWidth()
+                            .clickable(
+                                interactionSource = remember { MutableInteractionSource() },
+                                indication = null
+                            ) { onTermsClick() }
                             .padding(bottom = 6.dp)
                     )
                 }

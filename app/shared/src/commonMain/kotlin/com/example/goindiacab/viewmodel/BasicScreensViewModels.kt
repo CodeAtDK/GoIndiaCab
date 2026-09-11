@@ -218,7 +218,7 @@ class SavedPlacesViewModel : ViewModel() {
         } else {
             // Insert
             val newPlace = SavedPlaceItem(
-                id = (System.currentTimeMillis() % 100000).toString(),
+                id = kotlin.random.Random.nextInt(10000, 99999).toString(),
                 title = trimmedTitle,
                 address = trimmedAddress,
                 tag = tag

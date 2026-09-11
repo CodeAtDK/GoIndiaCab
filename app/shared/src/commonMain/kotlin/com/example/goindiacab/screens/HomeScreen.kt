@@ -74,7 +74,10 @@ fun HomeScreen(
     onPrivacyPolicyClick: () -> Unit = {},
     onMyReviewsClick: () -> Unit = {},
     onMyTripsClick: () -> Unit = {},
-    onOngoingTripClick: () -> Unit = {}
+    onOngoingTripClick: () -> Unit = {},
+    onWalletClick: () -> Unit = {},
+    onEmergencyContactsClick: () -> Unit = {},
+    onTermsClick: () -> Unit = {}
 ) {
     val uiState by viewModel.uiState.collectAsState()
     var activeTab by remember { mutableStateOf(HomeBottomTab.HOME) }
@@ -373,6 +376,9 @@ fun HomeScreen(
                     "Privacy Policy" -> onPrivacyPolicyClick()
                     "Notifications" -> onNotificationsClick()
                     "My Reviews" -> onMyReviewsClick()
+                    "Wallet" -> onWalletClick()
+                    "Emergency Contacts" -> onEmergencyContactsClick()
+                    "Terms of Service" -> onTermsClick()
                     "Outstation Cabs", "One-Way Cabs", "Hourly Rentals" -> onOutstationClick()
                     else -> {}
                 }

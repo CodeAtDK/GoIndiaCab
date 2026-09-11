@@ -657,3 +657,31 @@ fun TrashIcon(
     }
 }
 
+@Composable
+fun ShareIcon(
+    modifier: Modifier = Modifier,
+    size: Dp = 20.dp,
+    color: Color = Color.White
+) {
+    Canvas(modifier = modifier.size(size)) {
+        val w = this.size.width
+        val h = this.size.height
+        val stroke = 1.8.dp.toPx()
+
+        // 3 nodes
+        val topNode = androidx.compose.ui.geometry.Offset(w * 0.72f, h * 0.28f)
+        val bottomNode = androidx.compose.ui.geometry.Offset(w * 0.72f, h * 0.72f)
+        val leftNode = androidx.compose.ui.geometry.Offset(w * 0.28f, h * 0.50f)
+        val nodeRadius = w * 0.12f
+
+        // Connecting lines
+        drawLine(color = color, start = leftNode, end = topNode, strokeWidth = stroke)
+        drawLine(color = color, start = leftNode, end = bottomNode, strokeWidth = stroke)
+
+        // Circles
+        drawCircle(color = color, radius = nodeRadius, center = topNode, style = Stroke(stroke))
+        drawCircle(color = color, radius = nodeRadius, center = bottomNode, style = Stroke(stroke))
+        drawCircle(color = color, radius = nodeRadius, center = leftNode, style = Stroke(stroke))
+    }
+}
+

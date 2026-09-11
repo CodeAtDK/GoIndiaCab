@@ -48,6 +48,8 @@ fun ProfileScreen(
     onReferEarnClick: () -> Unit = {},
     onSettingsClick: () -> Unit = {},
     onHelpSupportClick: () -> Unit = {},
+    onWalletClick: () -> Unit = {},
+    onEmergencyContactsClick: () -> Unit = {},
     onLogoutClick: () -> Unit = {},
     onHomeTabClick: () -> Unit = {},
     onTripsTabClick: () -> Unit = {},
@@ -230,6 +232,36 @@ fun ProfileScreen(
                             )
                         },
                         onClick = onLocationClick
+                    )
+                    ProfileDividerLine()
+
+                    ProfileMenuItem(
+                        title = "GoIndiaCab Wallet",
+                        subtitle = "₹500.00 Balance",
+                        icon = {
+                            Icon(
+                                painter = painterResource(Res.drawable.ic_wallet_card),
+                                contentDescription = null,
+                                tint = ProfileTextDark,
+                                modifier = Modifier.size(18.dp)
+                            )
+                        },
+                        onClick = onWalletClick
+                    )
+                    ProfileDividerLine()
+
+                    ProfileMenuItem(
+                        title = "Emergency SOS Contacts",
+                        subtitle = "Trusted Safety Shield",
+                        icon = {
+                            Icon(
+                                painter = painterResource(Res.drawable.ic_shield_check),
+                                contentDescription = null,
+                                tint = ProfileTextDark,
+                                modifier = Modifier.size(18.dp)
+                            )
+                        },
+                        onClick = onEmergencyContactsClick
                     )
                     ProfileDividerLine()
 

@@ -56,6 +56,7 @@ fun BookingIdConfirmationScreen(
     viewModel: BookingFlowViewModel,
     onBackToHomeClick: () -> Unit,
     onTrackRideClick: () -> Unit,
+    onDownloadInvoiceClick: () -> Unit = {},
     modifier: Modifier = Modifier
 ) {
     val session by viewModel.bookingSession.collectAsState()
@@ -637,7 +638,7 @@ fun BookingIdConfirmationScreen(
                         horizontalArrangement = Arrangement.spacedBy(10.dp)
                     ) {
                         OutlinedButton(
-                            onClick = { toast("Invoice & Ticket PDF saved to Downloads") },
+                            onClick = onDownloadInvoiceClick,
                             modifier = Modifier
                                 .weight(1f)
                                 .height(46.dp),

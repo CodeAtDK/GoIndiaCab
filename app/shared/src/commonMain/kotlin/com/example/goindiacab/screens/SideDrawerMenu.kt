@@ -386,6 +386,35 @@ private fun PrimaryNavigationCard(onItemClick: (String) -> Unit) {
     ) {
         Column(modifier = Modifier.fillMaxWidth()) {
             DrawerMenuItem(
+                title = "GoIndiaCab Wallet",
+                icon = {
+                    Icon(
+                        painter = painterResource(Res.drawable.ic_wallet_card),
+                        contentDescription = null,
+                        tint = DrawerHeaderDark,
+                        modifier = Modifier.size(20.dp)
+                    )
+                },
+                badgeText = "₹500",
+                onClick = { onItemClick("Wallet") }
+            )
+            DrawerDivider()
+
+            DrawerMenuItem(
+                title = "Emergency SOS Contacts",
+                icon = {
+                    Icon(
+                        painter = painterResource(Res.drawable.ic_shield_alert),
+                        contentDescription = null,
+                        tint = DrawerHeaderDark,
+                        modifier = Modifier.size(20.dp)
+                    )
+                },
+                onClick = { onItemClick("Emergency Contacts") }
+            )
+            DrawerDivider()
+
+            DrawerMenuItem(
                 title = "Customer Support",
                 icon = {
                     Icon(
@@ -465,6 +494,13 @@ private fun SecondaryNavigationCard(onItemClick: (String) -> Unit) {
                     )
                 },
                 onClick = { onItemClick("Privacy Policy") }
+            )
+            DrawerDivider()
+
+            DrawerMenuItem(
+                title = "Terms of Service",
+                icon = { InfoIcon(size = 20.dp, color = DrawerHeaderDark) },
+                onClick = { onItemClick("Terms of Service") }
             )
         }
     }
